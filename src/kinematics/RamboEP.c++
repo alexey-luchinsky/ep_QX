@@ -19,15 +19,16 @@ RamboEP::RamboEP(dbl_type ecm_, Random *random_) {
 }
 
 void RamboEP::next() {
-    dbl_type WT=1;
-    Y = random->rand(minY, maxY); WT *= maxY-minY;
-    Q2 = random->rand(minQ2, maxQ2); WT *= maxQ2 - minQ2;
-    WT *= 1./(16*PI*PI);
+    Y = random->rand(minY, maxY);
+    dbl_type _maxQ2=min(maxQ2,S*Y);
+    Q2 = random->rand(minQ2, _maxQ2);
+    W2 = -Q2+S*Y;
     dbl_type omega = (Q2+S*(1-Y))/(2*ecm);
     dbl_type cosT = (S*(1-Y)-Q2)/(S*(1-Y)+Q2), sinT=sqrt(1-cosT*cosT);
     set_v4(kOut, 0, omega*sinT, omega*cosT, omega);
     subtract(kIn, kOut, q);
-    wT = (1+pow(1-Y,2))/Y; wL=-4*(1-Y)/Y;
+    wT = alpha/(pow(2*PI,2)*Q2)*(1+pow(1-Y,2))/pow(Y,2)*(maxY-minY)*(_maxQ2-minQ2);
+    wL = -2*alpha/(2*PI*PI*Q2)*(1-Y)/pow(Y,2)*(maxY-minY)*(_maxQ2-minQ2);
 }
 
 
