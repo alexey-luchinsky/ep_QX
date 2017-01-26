@@ -96,6 +96,14 @@ void set_v4(dbl_type (&v)[4], dbl_type x, dbl_type y, dbl_type z, dbl_type t) {
     v[3] = t;
 }
 
+inline 
+void set_v4(dbl_type (&vOut)[4], dbl_type vIn[4]) {
+    vOut[0]=vIn[0];
+    vOut[1]=vIn[1];
+    vOut[2]=vIn[2];
+    vOut[3]=vIn[3];
+}
+
 void subtract(dbl_type (&v1)[4], dbl_type (&v2)[4], dbl_type (&answ)[4]);
 
 void subtract(cmplx (&v1)[4], cmplx (&v2)[4], cmplx (&answ)[4]);

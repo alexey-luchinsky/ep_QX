@@ -5,6 +5,7 @@
 #include "kinematics/Rambo3.h"
 #include "kinematics/Random.h"
 #include "kinematics/Rambo2.h"
+#include "kinematics/RamboEP.h"
 
 dbl_type PI = acos(-1);
 
@@ -70,5 +71,22 @@ TEST_CASE("muon") {
     dbl_type th=pow(mmu,5)/(192*pow(PI,3));
 //    cout<<" sum="<<sum<<" th="<<th<<" sum/th="<<sum/th<<endl;
     REQUIRE( sum == Approx(th ));
-    
+}
+
+TEST_CASE("ramboEP") {
+    Random *random_generator = new Random();
+    dbl_type ecm=1e3;
+    RamboEP rambo(ecm,random_generator);
+    dbl_type P[4], k[4], kp[4], q[4];
+    set_v4(P,rambo.P);
+    set_v4(k,rambo.kIn);
+    REQUIRE( mass2(P) == Approx(0));
+    REQUIRE( mass2(k) == Approx(0));
+    REQUIRE( sp(P,k) == Approx(ecm*ecm/2));
+    rambo.next();
+    set_v4(kp, rambo.kOut);
+    subtract(k,kp,q);
+    REQUIRE(mass2(kp)==Approx(0));
+    REQUIRE( mass2(q)==Approx(-rambo.Q2));
+    REQUIRE( sp(q,P)/sp(k,P) == Approx(rambo.Y));
 }
