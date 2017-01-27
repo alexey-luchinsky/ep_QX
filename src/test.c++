@@ -168,7 +168,7 @@ TEST_CASE("toy2EP") {
     Random *random_generator = new Random();
     dbl_type m1 = random_generator->rand(0, ecm / 2), m2 = random_generator->rand(0, ecm / 2);
     m1=0; m2=0;
-    int nEv = 1e4;
+    int nEv = 1e5;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4];
     set_v4(P, 0, 0, -ecm / 2, ecm / 2);
     set_v4(k, 0, 0, ecm / 2, ecm / 2);
@@ -181,14 +181,15 @@ TEST_CASE("toy2EP") {
         dbl_type wt = ram3.next(ecm, kp, k1, k2);
         t = subtract_mass2(k, kp);
         u = subtract_mass2(P, kp);
-        dbl_type Q2 = -u;
+        dbl_type Q2 = -t;
         //        dbl_type matr2=1;
-        dbl_type matr2 = -32 * pow(alpha, 2) * pow(PI, 2) * pow(Q2, -2)*(pow(sp(k, k2), 2)*(Q2 * pow(m1, 2) + 4 * pow(sp(k1, kp), 2)) + pow(sp(k, k1), 2)*(Q2 * pow(m2, 2) + 4 * pow(sp(k2, kp), 2)) +
-                sp(k, k2)*(-2 * Q2 * sp(k1, k2) * sp(k1, kp) + 2 * Q2 * pow(m1, 2) * sp(k2, kp)) + Q2 * (pow(m2, 2) * pow(sp(k1, kp), 2) + pow(m1, 2) * pow(sp(k2, kp), 2) - 2 * sp(k1, k2) * sp(k1, kp) * sp(k2, kp)) -
-                2 * sp(k, k1)*(-(Q2 * pow(m2, 2) * sp(k1, kp)) + Q2 * sp(k1, k2) * sp(k2, kp) + sp(k, k2)*(Q2 * sp(k1, k2) + 4 * sp(k1, kp) * sp(k2, kp))));
+        dbl_type matr2 = -32*pow(alpha,2)*pow(PI,2)*(pow(sp(k,k2),2)*(Q2*pow(m1,2) + 4*pow(sp(k1,kp),2)) + pow(sp(k,k1),2)*(Q2*pow(m2,2) + 4*pow(sp(k2,kp),2)) + 
+     sp(k,k2)*(-2*Q2*sp(k1,k2)*sp(k1,kp) + 2*Q2*pow(m1,2)*sp(k2,kp)) + Q2*(pow(m2,2)*pow(sp(k1,kp),2) + pow(m1,2)*pow(sp(k2,kp),2) - 2*sp(k1,k2)*sp(k1,kp)*sp(k2,kp)) - 
+     2*sp(k,k1)*(-(Q2*pow(m2,2)*sp(k1,kp)) + Q2*sp(k1,k2)*sp(k2,kp) + sp(k,k2)*(Q2*sp(k1,k2) + 4*sp(k1,kp)*sp(k2,kp))));
         sum += matr2 * wt / nEv;
     }
-    cout<<" sum="<<sum<<endl;
+//    cout<<" sum="<<sum<<endl;
+    
     // ep
     RamboEP ramEP(ecm, random_generator, m1, m2);
     dbl_type p[4];
@@ -197,91 +198,38 @@ TEST_CASE("toy2EP") {
     dbl_type sumEP = 0, sumEPL=0, sumEPT=0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
         ramEP.next(kp, k1, k2);
+        t=subtract_mass2(k,kp);
+        u=subtract_mass2(p,kp);
         set_v4(q,ramEP.q);
         dbl_type Q2=ramEP.Q2, W2=ramEP.W2;
 
-        dbl_type matr2T = pow(sp(p,q),-4)*(-4*alpha*PI*Q2*pow(sp(p,q),3)*(pow(sp(k1,k2),2)*sp(k,q) + pow(m2,2)*sp(k,k1)*sp(k1,q) + sp(k1,k2)*sp(k1,q)*sp(k2,kp) + pow(m1,2)*sp(k,k2)*sp(k2,q) + 
-        sp(k1,k2)*sp(k1,kp)*sp(k2,q) + pow(m1,2)*pow(m2,2)*sp(kp,q)) + 
-     pow(sp(p,q),2)*(2*alpha*PI*W2*pow(m1,2)*pow(m2,2)*pow(Q2,2) + alpha*PI*pow(m1,2)*pow(m2,2)*pow(Q2,3) + alpha*PI*Q2*pow(m1,2)*pow(m2,2)*pow(W2,2) - 
-        4*alpha*PI*pow(m2,2)*pow(Q2,2)*pow(sp(k1,p),2) - 4*alpha*PI*Q2*pow(sp(k,k2),2)*pow(sp(k1,p),2) - 4*alpha*PI*Q2*pow(sp(k1,p),2)*pow(sp(k2,kp),2) - 
-        4*alpha*PI*pow(m1,2)*pow(Q2,2)*pow(sp(k2,p),2) - 4*alpha*PI*Q2*pow(sp(k1,kp),2)*pow(sp(k2,p),2) + 4*alpha*PI*Q2*pow(m1,2)*pow(m2,2)*pow(sp(p,q),2) + 
-        4*alpha*PI*pow(m1,2)*pow(sp(k,k2),2)*pow(sp(p,q),2) - 4*alpha*PI*Q2*pow(sp(k1,k2),2)*pow(sp(p,q),2) + 4*alpha*PI*pow(m2,2)*pow(sp(k1,kp),2)*pow(sp(p,q),2) + 
-        4*alpha*PI*pow(m1,2)*pow(sp(k2,kp),2)*pow(sp(p,q),2) + 4*alpha*PI*Q2*W2*pow(m2,2)*sp(k1,kp)*sp(k1,p) + 8*alpha*PI*Q2*pow(sp(k1,p),2)*sp(k,k2)*sp(k2,kp) - 
-        8*alpha*PI*pow(m1,2)*pow(sp(p,q),2)*sp(k,k2)*sp(k2,kp) - 4*alpha*PI*Q2*W2*pow(m1,2)*sp(k,k2)*sp(k2,p) - 4*alpha*PI*pow(m1,2)*pow(Q2,2)*sp(k,k2)*sp(k2,p) - 
-        8*alpha*PI*Q2*sp(k,k2)*sp(k1,kp)*sp(k1,p)*sp(k2,p) + 4*alpha*PI*Q2*W2*pow(m1,2)*sp(k2,kp)*sp(k2,p) + 8*alpha*PI*Q2*sp(k1,kp)*sp(k1,p)*sp(k2,kp)*sp(k2,p) + 
-        4*alpha*PI*Q2*pow(m1,2)*pow(m2,2)*sp(k,q)*sp(p,q) + 4*alpha*PI*W2*pow(m1,2)*pow(m2,2)*sp(k,q)*sp(p,q) + 
-        8*alpha*PI*pow(m2,2)*sp(k,q)*sp(k1,kp)*sp(k1,p)*sp(p,q) + 4*alpha*PI*Q2*pow(m2,2)*sp(k1,kp)*sp(k1,q)*sp(p,q) + 
-        4*alpha*PI*W2*pow(m2,2)*sp(k1,kp)*sp(k1,q)*sp(p,q) - 8*alpha*PI*Q2*pow(m2,2)*sp(k1,p)*sp(k1,q)*sp(p,q) - 8*alpha*PI*pow(sp(k,k2),2)*sp(k1,p)*sp(k1,q)*sp(p,q) - 
-        8*alpha*PI*pow(sp(k2,kp),2)*sp(k1,p)*sp(k1,q)*sp(p,q) + 16*alpha*PI*sp(k,k2)*sp(k1,p)*sp(k1,q)*sp(k2,kp)*sp(p,q) - 
-        8*alpha*PI*pow(m1,2)*sp(k,k2)*sp(k,q)*sp(k2,p)*sp(p,q) - 8*alpha*PI*sp(k,k2)*sp(k1,kp)*sp(k1,q)*sp(k2,p)*sp(p,q) + 
-        8*alpha*PI*pow(m1,2)*sp(k,q)*sp(k2,kp)*sp(k2,p)*sp(p,q) + 8*alpha*PI*sp(k1,kp)*sp(k1,q)*sp(k2,kp)*sp(k2,p)*sp(p,q) - 
-        4*alpha*PI*W2*pow(m1,2)*sp(k,k2)*sp(k2,q)*sp(p,q) - 8*alpha*PI*sp(k,k2)*sp(k1,kp)*sp(k1,p)*sp(k2,q)*sp(p,q) + 
-        4*alpha*PI*Q2*pow(m1,2)*sp(k2,kp)*sp(k2,q)*sp(p,q) + 4*alpha*PI*W2*pow(m1,2)*sp(k2,kp)*sp(k2,q)*sp(p,q) + 
-        8*alpha*PI*sp(k1,kp)*sp(k1,p)*sp(k2,kp)*sp(k2,q)*sp(p,q) - 8*alpha*PI*Q2*pow(m1,2)*sp(k2,p)*sp(k2,q)*sp(p,q) - 
-        8*alpha*PI*pow(sp(k1,kp),2)*sp(k2,p)*sp(k2,q)*sp(p,q) - 4*alpha*PI*W2*pow(m1,2)*pow(m2,2)*sp(kp,q)*sp(p,q) - 
-        8*alpha*PI*pow(m2,2)*sp(k1,kp)*sp(k1,p)*sp(kp,q)*sp(p,q) + 8*alpha*PI*pow(m1,2)*sp(k,k2)*sp(k2,p)*sp(kp,q)*sp(p,q) - 
-        8*alpha*PI*pow(m1,2)*sp(k2,kp)*sp(k2,p)*sp(kp,q)*sp(p,q) - 4*alpha*PI*pow(sp(k,k1),2)*
-         (Q2*pow(sp(k2,p),2) - pow(m2,2)*pow(sp(p,q),2) + 2*sp(k2,p)*sp(k2,q)*sp(p,q)) - 
-        alpha*PI*pow(sp(k1,k2),2)*(4*W2*sp(k,q)*sp(p,q) + (Q2 + W2)*(Q2*(Q2 + W2) - 4*sp(kp,q)*sp(p,q))) - 
-        4*alpha*PI*sp(k,k1)*(sp(k1,q)*(W2*pow(m2,2) - 2*sp(k,k2)*sp(k2,p) + 2*sp(k2,kp)*sp(k2,p))*sp(p,q) - 
-           2*sp(k1,kp)*(Q2*pow(sp(k2,p),2) - pow(m2,2)*pow(sp(p,q),2) + 2*sp(k2,p)*sp(k2,q)*sp(p,q)) + 
-           sp(k1,p)*(-2*sp(k,k2)*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + 2*sp(k2,kp)*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + 
-              pow(m2,2)*(Q2*(Q2 + W2) + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q)))) - 
-        4*alpha*PI*sp(k1,k2)*(-2*pow(sp(p,q),2)*sp(k,k1)*sp(k2,kp) + 2*pow(sp(p,q),2)*sp(k1,kp)*sp(k2,kp) - Q2*W2*sp(k,k1)*sp(k2,p) + Q2*W2*sp(k1,kp)*sp(k2,p) + 
-           pow(Q2,2)*sp(k1,kp)*sp(k2,p) + W2*sp(k1,q)*sp(k2,kp)*sp(p,q) - 2*sp(k,k1)*sp(k,q)*sp(k2,p)*sp(p,q) + 2*sp(k,q)*sp(k1,kp)*sp(k2,p)*sp(p,q) - 
-           2*Q2*sp(k1,q)*sp(k2,p)*sp(p,q) - Q2*sp(k,k1)*sp(k2,q)*sp(p,q) - W2*sp(k,k1)*sp(k2,q)*sp(p,q) + W2*sp(k1,kp)*sp(k2,q)*sp(p,q) + 
-           2*sp(k,k1)*sp(k2,p)*sp(kp,q)*sp(p,q) - 2*sp(k1,kp)*sp(k2,p)*sp(kp,q)*sp(p,q) - 
-           sp(k,k2)*(sp(p,q)*((Q2 + W2)*sp(k1,q) + 2*(-sp(k,k1) + sp(k1,kp))*sp(p,q)) + sp(k1,p)*(Q2*W2 + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q))) + 
-           sp(k1,p)*(-2*Q2*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + sp(k2,kp)*(Q2*(Q2 + W2) + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q))))) - 
-     4*alpha*PI*Q2*pow(sp(p,q),2)*(sp(k,k2)*sp(k1,k2)*sp(k1,p) + pow(m2,2)*sp(k1,kp)*sp(k1,p) + (sp(k,k1)*sp(k1,k2) + pow(m1,2)*sp(k2,kp))*sp(k2,p))*sp(q,q));
+        dbl_type matr2T = -4*alpha*PI*pow(Q2,2)*pow(s + u,-2)*(2*s*u*pow(m2,2)*pow(sp(k1,kp),2) + pow(m2,2)*pow(s,2)*pow(sp(k1,kp),2) + pow(m2,2)*pow(u,2)*pow(sp(k1,kp),2) + 
+     4*pow(m2,2)*pow(Q2,2)*pow(sp(k1,p),2) + pow(sp(k,k2),2)*(pow(m1,2)*pow(s + u,2) + 4*Q2*pow(sp(k1,p),2)) + 2*s*u*pow(m1,2)*pow(sp(k2,kp),2) + 
+     pow(m1,2)*pow(s,2)*pow(sp(k2,kp),2) + pow(m1,2)*pow(u,2)*pow(sp(k2,kp),2) + 4*Q2*pow(sp(k1,p),2)*pow(sp(k2,kp),2) + 4*pow(m1,2)*pow(Q2,2)*pow(sp(k2,p),2) + 
+     4*Q2*pow(sp(k1,kp),2)*pow(sp(k2,p),2) + pow(sp(k,k1),2)*(pow(m2,2)*pow(s + u,2) + 4*Q2*pow(sp(k2,p),2)) - 4*Q2*s*pow(m2,2)*sp(k1,kp)*sp(k1,p) - 
+     4*Q2*u*pow(m2,2)*sp(k1,kp)*sp(k1,p) - 4*s*u*sp(k1,k2)*sp(k1,kp)*sp(k2,kp) - 2*pow(s,2)*sp(k1,k2)*sp(k1,kp)*sp(k2,kp) - 2*pow(u,2)*sp(k1,k2)*sp(k1,kp)*sp(k2,kp) + 
+     4*Q2*s*sp(k1,k2)*sp(k1,p)*sp(k2,kp) + 4*Q2*u*sp(k1,k2)*sp(k1,p)*sp(k2,kp) + 4*Q2*s*sp(k1,k2)*sp(k1,kp)*sp(k2,p) + 4*Q2*u*sp(k1,k2)*sp(k1,kp)*sp(k2,p) - 
+     8*pow(Q2,2)*sp(k1,k2)*sp(k1,p)*sp(k2,p) - 4*Q2*s*pow(m1,2)*sp(k2,kp)*sp(k2,p) - 4*Q2*u*pow(m1,2)*sp(k2,kp)*sp(k2,p) - 8*Q2*sp(k1,kp)*sp(k1,p)*sp(k2,kp)*sp(k2,p) + 
+     2*sp(k,k2)*((s + u)*sp(k1,k2)*((s + u)*sp(k1,kp) - 2*Q2*sp(k1,p)) - (pow(m1,2)*pow(s + u,2) + 4*Q2*pow(sp(k1,p),2))*sp(k2,kp) + 
+        2*Q2*((s + u)*pow(m1,2) + 2*sp(k1,kp)*sp(k1,p))*sp(k2,p)) - 
+     2*sp(k,k1)*((pow(m2,2)*pow(s + u,2) + 4*Q2*pow(sp(k2,p),2))*sp(k1,kp) - 2*Q2*s*pow(m2,2)*sp(k1,p) - 2*Q2*u*pow(m2,2)*sp(k1,p) - 2*s*u*sp(k1,k2)*sp(k2,kp) - 
+        pow(s,2)*sp(k1,k2)*sp(k2,kp) - pow(u,2)*sp(k1,k2)*sp(k2,kp) + 2*Q2*s*sp(k1,k2)*sp(k2,p) + 2*Q2*u*sp(k1,k2)*sp(k2,p) - 4*Q2*sp(k1,p)*sp(k2,kp)*sp(k2,p) + 
+        sp(k,k2)*(pow(s + u,2)*sp(k1,k2) + 4*Q2*sp(k1,p)*sp(k2,p))));
 
-        dbl_type matr2L = -(alpha*PI*pow(Q2,-1)*pow(sp(p,q),-2)*(2*W2*pow(m1,2)*pow(m2,2)*pow(Q2,3) + pow(m1,2)*pow(m2,2)*pow(Q2,4) + pow(m1,2)*pow(m2,2)*pow(Q2,2)*pow(W2,2) - 
-       4*pow(m2,2)*pow(Q2,3)*pow(sp(k1,p),2) - 4*pow(Q2,2)*pow(sp(k,k2),2)*pow(sp(k1,p),2) - 4*pow(Q2,2)*pow(sp(k1,p),2)*pow(sp(k2,kp),2) - 
-       4*pow(m1,2)*pow(Q2,3)*pow(sp(k2,p),2) - 4*pow(Q2,2)*pow(sp(k1,kp),2)*pow(sp(k2,p),2) + 4*pow(m1,2)*pow(m2,2)*pow(Q2,2)*pow(sp(p,q),2) + 
-       4*Q2*pow(m1,2)*pow(sp(k,k2),2)*pow(sp(p,q),2) + 4*pow(m1,2)*pow(m2,2)*pow(sp(k,q),2)*pow(sp(p,q),2) + 4*Q2*pow(m2,2)*pow(sp(k1,kp),2)*pow(sp(p,q),2) - 
-       4*Q2*pow(m2,2)*pow(sp(k1,q),2)*pow(sp(p,q),2) - 4*pow(sp(k,k2),2)*pow(sp(k1,q),2)*pow(sp(p,q),2) + 4*Q2*pow(m1,2)*pow(sp(k2,kp),2)*pow(sp(p,q),2) - 
-       4*pow(sp(k1,q),2)*pow(sp(k2,kp),2)*pow(sp(p,q),2) - 4*Q2*pow(m1,2)*pow(sp(k2,q),2)*pow(sp(p,q),2) - 4*pow(sp(k1,kp),2)*pow(sp(k2,q),2)*pow(sp(p,q),2) + 
-       4*pow(m1,2)*pow(m2,2)*pow(sp(kp,q),2)*pow(sp(p,q),2) + 4*W2*pow(m2,2)*pow(Q2,2)*sp(k1,kp)*sp(k1,p) + 4*pow(m2,2)*pow(Q2,3)*sp(k1,kp)*sp(k1,p) + 
-       8*pow(m2,2)*pow(sp(p,q),2)*sp(k,q)*sp(k1,kp)*sp(k1,q) + 8*pow(Q2,2)*pow(sp(k1,p),2)*sp(k,k2)*sp(k2,kp) - 8*Q2*pow(m1,2)*pow(sp(p,q),2)*sp(k,k2)*sp(k2,kp) + 
-       8*pow(sp(k1,q),2)*pow(sp(p,q),2)*sp(k,k2)*sp(k2,kp) - 4*W2*pow(m1,2)*pow(Q2,2)*sp(k,k2)*sp(k2,p) - 4*pow(m1,2)*pow(Q2,3)*sp(k,k2)*sp(k2,p) - 
-       8*pow(Q2,2)*sp(k,k2)*sp(k1,kp)*sp(k1,p)*sp(k2,p) + 4*W2*pow(m1,2)*pow(Q2,2)*sp(k2,kp)*sp(k2,p) + 4*pow(m1,2)*pow(Q2,3)*sp(k2,kp)*sp(k2,p) + 
-       8*pow(Q2,2)*sp(k1,kp)*sp(k1,p)*sp(k2,kp)*sp(k2,p) - 8*pow(m1,2)*pow(sp(p,q),2)*sp(k,k2)*sp(k,q)*sp(k2,q) - 
-       8*pow(sp(p,q),2)*sp(k,k2)*sp(k1,kp)*sp(k1,q)*sp(k2,q) + 8*pow(m1,2)*pow(sp(p,q),2)*sp(k,q)*sp(k2,kp)*sp(k2,q) + 
-       8*pow(sp(p,q),2)*sp(k1,kp)*sp(k1,q)*sp(k2,kp)*sp(k2,q) - 8*pow(m1,2)*pow(m2,2)*pow(sp(p,q),2)*sp(k,q)*sp(kp,q) - 
-       8*pow(m2,2)*pow(sp(p,q),2)*sp(k1,kp)*sp(k1,q)*sp(kp,q) + 8*pow(m1,2)*pow(sp(p,q),2)*sp(k,k2)*sp(k2,q)*sp(kp,q) - 
-       8*pow(m1,2)*pow(sp(p,q),2)*sp(k2,kp)*sp(k2,q)*sp(kp,q) + 4*Q2*W2*pow(m1,2)*pow(m2,2)*sp(k,q)*sp(p,q) + 4*pow(m1,2)*pow(m2,2)*pow(Q2,2)*sp(k,q)*sp(p,q) + 
-       8*Q2*pow(m2,2)*sp(k,q)*sp(k1,kp)*sp(k1,p)*sp(p,q) + 4*Q2*W2*pow(m2,2)*sp(k1,kp)*sp(k1,q)*sp(p,q) - 8*pow(m2,2)*pow(Q2,2)*sp(k1,p)*sp(k1,q)*sp(p,q) - 
-       8*Q2*pow(sp(k,k2),2)*sp(k1,p)*sp(k1,q)*sp(p,q) - 8*Q2*pow(sp(k2,kp),2)*sp(k1,p)*sp(k1,q)*sp(p,q) + 16*Q2*sp(k,k2)*sp(k1,p)*sp(k1,q)*sp(k2,kp)*sp(p,q) - 
-       8*Q2*pow(m1,2)*sp(k,k2)*sp(k,q)*sp(k2,p)*sp(p,q) - 8*Q2*sp(k,k2)*sp(k1,kp)*sp(k1,q)*sp(k2,p)*sp(p,q) + 8*Q2*pow(m1,2)*sp(k,q)*sp(k2,kp)*sp(k2,p)*sp(p,q) + 
-       8*Q2*sp(k1,kp)*sp(k1,q)*sp(k2,kp)*sp(k2,p)*sp(p,q) - 4*Q2*W2*pow(m1,2)*sp(k,k2)*sp(k2,q)*sp(p,q) - 4*pow(m1,2)*pow(Q2,2)*sp(k,k2)*sp(k2,q)*sp(p,q) - 
-       8*Q2*sp(k,k2)*sp(k1,kp)*sp(k1,p)*sp(k2,q)*sp(p,q) + 4*Q2*W2*pow(m1,2)*sp(k2,kp)*sp(k2,q)*sp(p,q) + 4*pow(m1,2)*pow(Q2,2)*sp(k2,kp)*sp(k2,q)*sp(p,q) + 
-       8*Q2*sp(k1,kp)*sp(k1,p)*sp(k2,kp)*sp(k2,q)*sp(p,q) - 8*pow(m1,2)*pow(Q2,2)*sp(k2,p)*sp(k2,q)*sp(p,q) - 8*Q2*pow(sp(k1,kp),2)*sp(k2,p)*sp(k2,q)*sp(p,q) - 
-       4*Q2*W2*pow(m1,2)*pow(m2,2)*sp(kp,q)*sp(p,q) - 4*pow(m1,2)*pow(m2,2)*pow(Q2,2)*sp(kp,q)*sp(p,q) - 8*Q2*pow(m2,2)*sp(k1,kp)*sp(k1,p)*sp(kp,q)*sp(p,q) + 
-       8*Q2*pow(m1,2)*sp(k,k2)*sp(k2,p)*sp(kp,q)*sp(p,q) - 8*Q2*pow(m1,2)*sp(k2,kp)*sp(k2,p)*sp(kp,q)*sp(p,q) - 
-       4*pow(sp(k,k1),2)*(pow(Q2,2)*pow(sp(k2,p),2) + (-(Q2*pow(m2,2)) + pow(sp(k2,q),2))*pow(sp(p,q),2) + 2*Q2*sp(k2,p)*sp(k2,q)*sp(p,q)) - 
-       pow(sp(k1,k2),2)*(4*pow(sp(k,q),2)*pow(sp(p,q),2) + 4*pow(sp(kp,q),2)*pow(sp(p,q),2) + pow(Q2,2)*(pow(Q2 + W2,2) + 4*pow(sp(p,q),2)) - 
-          4*Q2*(Q2 + W2)*sp(kp,q)*sp(p,q) + 4*sp(k,q)*sp(p,q)*(Q2*W2 - 2*sp(kp,q)*sp(p,q))) - 
-       4*sp(k,k1)*(-2*sp(k1,kp)*(pow(Q2,2)*pow(sp(k2,p),2) + (-(Q2*pow(m2,2)) + pow(sp(k2,q),2))*pow(sp(p,q),2) + 2*Q2*sp(k2,p)*sp(k2,q)*sp(p,q)) + 
-          Q2*sp(k1,p)*(-2*sp(k,k2)*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + 2*sp(k2,kp)*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + 
-             pow(m2,2)*(Q2*(Q2 + W2) + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q))) + 
-          sp(k1,q)*sp(p,q)*(-2*sp(k,k2)*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + 2*sp(k2,kp)*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + 
-             pow(m2,2)*(Q2*(Q2 + W2) + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q)))) + 
-       4*sp(k1,k2)*(2*Q2*pow(sp(p,q),2)*sp(k,k1)*sp(k2,kp) - 2*Q2*pow(sp(p,q),2)*sp(k1,kp)*sp(k2,kp) - 2*pow(sp(p,q),2)*sp(k,q)*sp(k1,q)*sp(k2,kp) + 
-          W2*pow(Q2,2)*sp(k,k1)*sp(k2,p) + pow(Q2,3)*sp(k,k1)*sp(k2,p) - W2*pow(Q2,2)*sp(k1,kp)*sp(k2,p) - pow(Q2,3)*sp(k1,kp)*sp(k2,p) + 
-          2*pow(sp(p,q),2)*sp(k,k1)*sp(k,q)*sp(k2,q) - 2*pow(sp(p,q),2)*sp(k,q)*sp(k1,kp)*sp(k2,q) + 2*Q2*pow(sp(p,q),2)*sp(k1,q)*sp(k2,q) + 
-          2*pow(sp(p,q),2)*sp(k1,q)*sp(k2,kp)*sp(kp,q) - 2*pow(sp(p,q),2)*sp(k,k1)*sp(k2,q)*sp(kp,q) + 2*pow(sp(p,q),2)*sp(k1,kp)*sp(k2,q)*sp(kp,q) - 
-          Q2*W2*sp(k1,q)*sp(k2,kp)*sp(p,q) - pow(Q2,2)*sp(k1,q)*sp(k2,kp)*sp(p,q) + 2*Q2*sp(k,k1)*sp(k,q)*sp(k2,p)*sp(p,q) - 2*Q2*sp(k,q)*sp(k1,kp)*sp(k2,p)*sp(p,q) + 
-          2*pow(Q2,2)*sp(k1,q)*sp(k2,p)*sp(p,q) + Q2*W2*sp(k,k1)*sp(k2,q)*sp(p,q) + pow(Q2,2)*sp(k,k1)*sp(k2,q)*sp(p,q) - Q2*W2*sp(k1,kp)*sp(k2,q)*sp(p,q) - 
-          pow(Q2,2)*sp(k1,kp)*sp(k2,q)*sp(p,q) - 2*Q2*sp(k,k1)*sp(k2,p)*sp(kp,q)*sp(p,q) + 2*Q2*sp(k1,kp)*sp(k2,p)*sp(kp,q)*sp(p,q) - 
-          Q2*sp(k1,p)*(-2*Q2*(Q2*sp(k2,p) + sp(k2,q)*sp(p,q)) + sp(k2,kp)*(Q2*(Q2 + W2) + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q))) + 
-          sp(k,k2)*(Q2*sp(k1,p)*(Q2*(Q2 + W2) + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q)) + 
-             sp(p,q)*(2*Q2*(-sp(k,k1) + sp(k1,kp))*sp(p,q) + sp(k1,q)*(Q2*(Q2 + W2) + 2*sp(k,q)*sp(p,q) - 2*sp(kp,q)*sp(p,q))))) + 
-       4*Q2*pow(sp(k1,k2),2)*sp(k,q)*sp(p,q)*sp(q,q) - 4*Q2*pow(m2,2)*sp(k1,kp)*sp(k1,q)*sp(p,q)*sp(q,q)));
+        dbl_type matr2L = 4*alpha*PI*pow(Q2,3)*pow(s + u,-2)*(-2*s*u*pow(m1,2)*pow(m2,2) - pow(m1,2)*pow(m2,2)*pow(s,2) - pow(m1,2)*pow(m2,2)*pow(u,2) + pow(s + u,2)*pow(sp(k1,k2),2) + 
+     4*Q2*pow(m2,2)*pow(sp(k1,p),2) + 4*pow(sp(k,k2),2)*pow(sp(k1,p),2) + 4*pow(sp(k1,p),2)*pow(sp(k2,kp),2) + 4*Q2*pow(m1,2)*pow(sp(k2,p),2) + 
+     4*pow(sp(k,k1),2)*pow(sp(k2,p),2) + 4*pow(sp(k1,kp),2)*pow(sp(k2,p),2) - 4*s*pow(m2,2)*sp(k1,kp)*sp(k1,p) - 4*u*pow(m2,2)*sp(k1,kp)*sp(k1,p) - 
+     8*pow(sp(k1,p),2)*sp(k,k2)*sp(k2,kp) + 4*s*pow(m1,2)*sp(k,k2)*sp(k2,p) + 4*u*pow(m1,2)*sp(k,k2)*sp(k2,p) + 8*sp(k,k2)*sp(k1,kp)*sp(k1,p)*sp(k2,p) - 
+     4*s*pow(m1,2)*sp(k2,kp)*sp(k2,p) - 4*u*pow(m1,2)*sp(k2,kp)*sp(k2,p) - 8*sp(k1,kp)*sp(k1,p)*sp(k2,kp)*sp(k2,p) - 
+     4*sp(k1,k2)*((s + u)*sp(k,k2)*sp(k1,p) + (s + u)*(sp(k,k1) - sp(k1,kp))*sp(k2,p) - sp(k1,p)*((s + u)*sp(k2,kp) - 2*Q2*sp(k2,p))) + 
+     4*sp(k,k1)*(-2*pow(sp(k2,p),2)*sp(k1,kp) + sp(k1,p)*((s + u)*pow(m2,2) - 2*sp(k,k2)*sp(k2,p) + 2*sp(k2,kp)*sp(k2,p))));
+        
         sumEPT += matr2T * ramEP.wT/nEv;
         sumEPL += matr2L * ramEP.wL/nEv;
         sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
     };
-    cout<<"sumEPT="<<sumEPT<<endl;
-    cout<<"sumEPL="<<sumEPL<<endl;
-    cout<<" sumEP="<<sumEP<<endl;
+//    cout<<"sumEPT="<<sumEPT<<endl;
+//    cout<<"sumEPL="<<sumEPL<<endl;
+//    cout<<" sumEP="<<sumEP<<endl;
+    REQUIRE(sum == Approx(sumEP).epsilon(0.01));
 }
