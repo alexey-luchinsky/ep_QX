@@ -76,29 +76,26 @@ TEST_CASE("muon") {
 TEST_CASE("ramboEP") {
     Random *random_generator = new Random();
     dbl_type ecm = 1e3, m1=10, m2=20;
-    RamboEP rambo(ecm, random_generator);
-    dbl_type P[4], k[4], kp[4], q[4], k1[4], k2[4], Phard[4], Ptot[4];
+    dbl_type P[4], k[4], kp[4], q[4], k1[4], k2[4], Ptot[4];
+
+    RamboEP rambo(ecm, random_generator,m1, m2);
     set_v4(P, rambo.P);
     set_v4(k, rambo.kIn);
     REQUIRE(mass2(P) == Approx(0));
     REQUIRE(mass2(k) == Approx(0));
     REQUIRE(sp(P, k) == Approx(ecm * ecm / 2));
-    rambo.next();
-    set_v4(kp, rambo.kOut);
+
+    
+    rambo.next(kp, k1, k2);
     subtract(k, kp, q); // q = k-kp
-    sum(q,P,Phard);      // Phard = q+p
     REQUIRE(mass2(kp) == Approx(0));
     REQUIRE(mass2(q) == Approx(-rambo.Q2));
     REQUIRE(sp(q, P) / sp(k, P) == Approx(rambo.Y));
     // s+t+u == W2
     REQUIRE( ecm*ecm+subtract_mass2(k,kp)+subtract_mass2(P,kp) == Approx(rambo.W2));
-    
-    // W2 -> m1 m2 decay
-    Rambo2 ram2(m1,m2,random_generator);
-    ram2.next(sqrt(rambo.W2),k1,k2);
-    apply_boost_to(Phard,k1);  apply_boost_to(Phard, k2);
     REQUIRE(mass2(k1)==Approx(m1*m1));
     REQUIRE(mass2(k2)==Approx(m2*m2));
+    
     sum(k1,k2,Ptot);
     REQUIRE(mass2(Ptot)==Approx(rambo.W2));
     sum(kp,k1,k2,Ptot);
@@ -106,8 +103,7 @@ TEST_CASE("ramboEP") {
     REQUIRE(Ptot[0]==Approx(0));
     REQUIRE(Ptot[1]==Approx(0));
     REQUIRE(Ptot[2]==Approx(0));
-    REQUIRE(Ptot[3]==Approx(ecm));
-    
+    REQUIRE(Ptot[3]==Approx(ecm));    
 }
 
 TEST_CASE("EPflat") {
@@ -124,12 +120,12 @@ TEST_CASE("EPflat") {
     };
     sum = sum/nEv;
     // eP integration
-    RamboEP ramEP(ecm, random_generator);
+    RamboEP ramEP(ecm, random_generator,m1,m2);
     Rambo2 ram2(m1,m2,random_generator);
     dbl_type sumEP=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
-        ramEP.next();
-        sumEP += ramEP.wt*ram2.next(sqrt(ramEP.W2),k1,k2);
+        ramEP.next(kP,k1,k2);
+        sumEP += ramEP.wt;
     };
     sumEP = sumEP/nEv;
     REQUIRE(sum==Approx(sumEP).epsilon(1e-4));
