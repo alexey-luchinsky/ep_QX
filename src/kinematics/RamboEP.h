@@ -22,9 +22,9 @@ public:
     dbl_type Y, minY, maxY;
     dbl_type P[4], kIn[4], kOut[4], q[4];
     dbl_type W2;
-    dbl_type wT, wL;
+    dbl_type wT, wL, wt;
     dbl_type PI;
-    dbl_type alpha = 1./137;
+    dbl_type alpha;
 };
 
 #endif	/* RAMBOEP_H */

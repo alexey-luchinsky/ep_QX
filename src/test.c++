@@ -110,6 +110,31 @@ TEST_CASE("ramboEP") {
     
 }
 
+TEST_CASE("EPflat") {
+    dbl_type ecm=10;
+    Random *random_generator = new Random();
+    int nEv=1e5;
+    dbl_type kP[4], k1[4], k2[4];
+    // 3D integration
+    Rambo3 ram3(0,0,0,random_generator);
+    dbl_type sum=0;
+    for(int iEv=0; iEv<nEv; ++iEv) {
+        sum += ram3.next(ecm,kP,k1,k2);
+    };
+    sum = sum/nEv;
+    // eP integration
+    RamboEP ramEP(ecm, random_generator);
+    Rambo2 ram2(0,0,random_generator);
+    dbl_type sumEP=0;
+    for(int iEv=0; iEv<nEv; ++iEv) {
+        ramEP.next();
+        sumEP += ramEP.wt*ram2.next(sqrt(ramEP.W2),k1,k2);
+    };
+    sumEP = sumEP/nEv;
+    REQUIRE(sum==Approx(sumEP).epsilon(1e-4));
+}
+
+/*
 TEST_CASE("toyEP") {
     dbl_type ecm=10, s=ecm*ecm;
     Random *random_generator=new Random();
@@ -146,3 +171,4 @@ TEST_CASE("toyEP") {
     cout<<" sumEP="<<sumEP<<endl;
     cout<<" sum/sumEP="<<sum/sumEP<<endl;
 };
+*/
