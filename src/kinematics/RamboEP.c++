@@ -41,8 +41,8 @@ void RamboEP::next() {
     dbl_type cosT = (S*(1-Y)-Q2)/(S*(1-Y)+Q2), sinT=sqrt(1-cosT*cosT);
     set_v4(kOut, 0, omega*sinT, omega*cosT, omega);
     subtract(kIn, kOut, q);
-    wT = alpha/(pow(2*PI,2)*Q2)*(1+pow(1-Y,2))/pow(Y,2)*(maxY-minY)*(_maxQ2-minQ2);
-    wL = -2*alpha/(2*PI*PI*Q2)*(1-Y)/pow(Y,2)*(maxY-minY)*(_maxQ2-minQ2);
+    wT = wt*8*PI*alpha/Q2*(1+pow(1-Y,2))/pow(Y,2);
+    wL = -wt*32*PI*alpha/Q2*(1-Y)/pow(Y,2);
 }
 
 void RamboEP::next(dbl_type (&kp_)[4], dbl_type (&k1)[4], dbl_type (&k2)[4]) {

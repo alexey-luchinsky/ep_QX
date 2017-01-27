@@ -131,41 +131,38 @@ TEST_CASE("EPflat") {
     REQUIRE(sum==Approx(sumEP).epsilon(1e-4));
 }
 
-/*
-TEST_CASE("toyEP") {
-    dbl_type ecm=10, s=ecm*ecm;
+TEST_CASE("toy1EP") {
+    dbl_type ecm=100;
     Random *random_generator=new Random();
+    dbl_type m1=random_generator->rand(0,ecm/2), m2=random_generator->rand(0,ecm/2);
+//    dbl_type m1=ecm/3, m2=ecm/3;
     int nEv=1e4;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4];
-    
-    // direct rambo 3 calculations
-    dbl_type alpha = 1./137;
-    Rambo3 rambo(0,0,0,random_generator);
+    set_v4(P,0,0,ecm/2,ecm/2);
+    set_v4(k,0,0,-ecm/2,ecm/2);
+    dbl_type s=ecm*ecm, t, u;
+    dbl_type PI=acos(-1), alpha=1./137;
+    // ram3
+    Rambo3 ram3(0,m1,m2,random_generator);
     dbl_type sum=0;
-    set_v4(P,0,0,-ecm/2,ecm/2); set_v4(k,0,0,ecm/2,ecm/2);
     for(int iEv=0; iEv<nEv; ++iEv) {
-        dbl_type wt = rambo.next(ecm,kp,k1,k2);
-        dbl_type t=subtract_mass2(k,kp), u=subtract_mass2(P,kp);
-        dbl_type matr2 = - 128*pow(PI*alpha,2)*s*u/pow(s+u,2);
-        sum += matr2*wt;
+        dbl_type wt=ram3.next(ecm,kp,k1,k2);
+        u=subtract_mass2(k,kp);
+        t=subtract_mass2(P,kp);
+        dbl_type matr2 = -128*PI*PI*alpha*alpha*s*u/pow(s+u,2);
+        sum += matr2*wt/nEv;
     }
-    sum /= nEv;
-    cout<<" sum="<<sum<<endl;
-    
-    // ramEP calculations
-    RamboEP ramEP(ecm, random_generator);
+//    cout<<" sum="<<sum<<endl;
+    // ep
+    RamboEP ramEP(ecm, random_generator, m1, m2);
     dbl_type sumEP=0;
-    Rambo2 ram2(0,0,random_generator);
     for(int iEv=0; iEv<nEv; ++iEv) {
-        ramEP.next();
-        dbl_type mtr2T=0;
-        dbl_type mtr2L = -4*PI*alpha*ramEP.Q2;
-        dbl_type wt=ram2.next(sqrt(ramEP.W2), k1, k2);
-//        cout<<"iEv="<<iEv<<" S="<<ramEP.S<<" W2="<<ramEP.W2<<" Q2="<<ramEP.Q2<<"Y="<<ramEP.Y<<" wt="<<wt<<endl;
-        sumEP += wt*(ramEP.wT*mtr2T+ramEP.wL*mtr2L);
+        ramEP.next(kp,k1,k2);
+        dbl_type matr2T=0;
+        dbl_type matr2L = -4*PI*alpha*ramEP.Q2;
+        sumEP += (matr2L*ramEP.wL+matr2T*ramEP.wT)/nEv;
     };
-    sumEP /= nEv;
-    cout<<" sumEP="<<sumEP<<endl;
-    cout<<" sum/sumEP="<<sum/sumEP<<endl;
-};
-*/
+//    cout<<" sumEP="<<sumEP<<endl;
+//    cout<<" sumEP/sum="<<sumEP/sum<<endl;
+    REQUIRE(sumEP==Approx(sum).epsilon(0.001));
+}
