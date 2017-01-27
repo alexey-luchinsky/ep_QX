@@ -21,6 +21,7 @@ Rambo3::Rambo3(dbl_type m1_, dbl_type m2_, dbl_type m3_, Random *random_) {
 }
 
 dbl_type Rambo3::next(dbl_type ecm, dbl_type (&k1)[4], dbl_type (&k2)[4], dbl_type (&k3)[4]) {
+    if(ecm<m1+m2+m3) return 0;
     dbl_type min_q2 = pow(m1 + m2, 2);
     dbl_type max_q2 = pow(ecm - m3, 2);
 

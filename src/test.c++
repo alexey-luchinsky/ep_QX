@@ -115,8 +115,9 @@ TEST_CASE("EPflat") {
     Random *random_generator = new Random();
     int nEv=1e5;
     dbl_type kP[4], k1[4], k2[4];
+    dbl_type m1=random_generator->rand(0,ecm/2), m2=random_generator->rand(0,ecm/2);
     // 3D integration
-    Rambo3 ram3(0,0,0,random_generator);
+    Rambo3 ram3(0,m1,m2,random_generator);
     dbl_type sum=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         sum += ram3.next(ecm,kP,k1,k2);
@@ -124,7 +125,7 @@ TEST_CASE("EPflat") {
     sum = sum/nEv;
     // eP integration
     RamboEP ramEP(ecm, random_generator);
-    Rambo2 ram2(0,0,random_generator);
+    Rambo2 ram2(m1,m2,random_generator);
     dbl_type sumEP=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         ramEP.next();

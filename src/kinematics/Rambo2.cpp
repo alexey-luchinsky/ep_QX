@@ -16,6 +16,7 @@ Rambo2::Rambo2(dbl_type m1_, dbl_type m2_, Random *random_) {
 }
 
 dbl_type Rambo2::next(dbl_type ecm, dbl_type(&k1)[4], dbl_type(&k2)[4]) {
+    if(ecm<m1+m2) return 0;
     dbl_type WT = 1;
     dbl_type e1 = (ecm * ecm + m1 * m1 - m2 * m2) / (2 * ecm), e2 = (ecm * ecm + m2 * m2 - m1 * m1) / (2 * ecm);
     dbl_type mom = sqrt(e1*e1-m1*m1);
