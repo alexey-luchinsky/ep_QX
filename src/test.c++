@@ -285,7 +285,7 @@ TEST_CASE("EPflatX") {
 }
 
 TEST_CASE("ramEPX_kin") {
-    dbl_type ecm = 10, x = 0.5;
+    dbl_type ecm = 10, x = 1;
     Random *random_generator = new Random();
     RamboEP ramEP(ecm, random_generator);
     dbl_type kp[4], k1[4], k2[4];
