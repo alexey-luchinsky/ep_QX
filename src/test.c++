@@ -254,3 +254,29 @@ TEST_CASE("Q2_cut") {
     REQUIRE(sumEP/sum == Approx(1).epsilon(0.01));
    
 }
+
+TEST_CASE("EPflatX") {
+    dbl_type ecm = 10;
+    dbl_type x=0.5;
+    Random *random_generator = new Random();
+    int nEv = 1e4;
+    dbl_type kP[4], k1[4], k2[4];
+    dbl_type m1 = random_generator->rand(0, ecm*sqrt(x) / 2), m2 = random_generator->rand(0, ecm*sqrt(x) / 2);
+    // 3D integration
+    Rambo3 ram3(0, m1, m2, random_generator);
+    dbl_type sum = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        sum += ram3.next(sqrt(x)*ecm, kP, k1, k2);
+    };
+    sum = sum / nEv;
+    // eP integration
+    RamboEP ramEP(ecm, random_generator, m1, m2);
+    Rambo2 ram2(m1, m2, random_generator);
+    dbl_type sumEP = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        ramEP.next(kP, k1, k2,x);
+        sumEP += ramEP.wt;
+    };
+    sumEP = sumEP / nEv;
+    REQUIRE(sum == Approx(sumEP).epsilon(1e-4));
+}

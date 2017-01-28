@@ -17,8 +17,8 @@ class RamboEP {
 public:
     RamboEP(dbl_type _ecm, Random *random_, dbl_type _m1=0, dbl_type _m2=0, dbl_type _m3=0);
     ~RamboEP();
-    bool next();
-    bool next(dbl_type (&_kp)[4], dbl_type (&k1)[4], dbl_type (&k2)[4]);
+    bool next(dbl_type x=1);
+    bool next(dbl_type (&_kp)[4], dbl_type (&k1)[4], dbl_type (&k2)[4], dbl_type x=1);
 //private:
     Random *random;
     Rambo2 *ram2;
