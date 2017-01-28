@@ -285,19 +285,25 @@ TEST_CASE("EPflatX") {
 }
 
 TEST_CASE("ramEPX_kin") {
-    dbl_type ecm = 10, x = 1;
+    dbl_type ecm = 10, x = 0.5;
     Random *random_generator = new Random();
     RamboEP ramEP(ecm, random_generator);
-    dbl_type kp[4], k1[4], k2[4];
-    ramEP.next(kp, k1, k2, x);
-    REQUIRE(mass2(ramEP.Pg)==Approx(0));
-    REQUIRE(ramEP.Pg[3] == Approx(x*ramEP.P[3]));
-    REQUIRE(mass2(ramEP.PhardG)==Approx(ramEP.W2));
-    println_4v("P=", ramEP.P);
-    println_4v("Pg=", ramEP.Pg);
+    dbl_type kp[4], k1[4], k2[4], P[4], Pg[4], q[4];
+    ramEP.next(x);
+    set_v4(P,ramEP.P);
+    set_v4(Pg,ramEP.Pg);
+    set_v4(q,ramEP.q);
+    REQUIRE(mass2(Pg)==Approx(0));
+    REQUIRE(Pg[0] == Approx(P[0]));
+    REQUIRE(Pg[1] == Approx(x*P[1]));
+    REQUIRE(Pg[2] == Approx(x*P[2]));
+    REQUIRE(Pg[3] == Approx(x*P[3]));
+    println_4v("P=", P);
+    println_4v("Pg=", Pg);
     println_4v("k=", ramEP.kIn);
     println_4v("q=", ramEP.q);
-    println_4v("PhardG=", ramEP.PhardG);
+    cout<<" Y="<<ramEP.Y<<endl;
+//    println_4v("PhardG=", PhardG);
     cout<<" W2="<<ramEP.W2<<endl;
-
+    REQUIRE(mass2(q)==Approx(-ramEP.Q2));
 }

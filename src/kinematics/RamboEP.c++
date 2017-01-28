@@ -31,8 +31,7 @@ RamboEP::~RamboEP() {
 
 bool RamboEP::next(dbl_type x) {
 //    cout<<"RamboEP::next, start"<<endl;
-    set_v4(Pg,P);
-    mult(Pg,x);
+    set_v4(Pg,P);  mult(Pg,x);
     wt=1./(16*PI*PI);
     if(maxY<minY) {
         wt=0; wT=0; wL=0; return false;        
@@ -47,10 +46,20 @@ bool RamboEP::next(dbl_type x) {
     Q2 = random->rand(minQ2, _maxQ2);
     wt *= _maxQ2-minQ2;
     W2 = -Q2+x*S*Y;
+//    cout<<"RamboER::next: x="<<x<<endl;
+//    cout<<"RamboER::next: Y="<<Y<<endl;
+//    cout<<"RamboER::next: S="<<S<<endl;
+//    cout<<"RamboER::next: Q2="<<Q2<<endl;
+//    cout<<"RamboER::next: W2="<<W2<<endl;
     dbl_type omega = (Q2+x*S*(1-Y))/(2*x*ecm);
     dbl_type cosT = (x*S*(1-Y)-Q2)/(x*S*(1-Y)+Q2), sinT=sqrt(1-cosT*cosT);
     set_v4(kOut, 0, omega*sinT, omega*cosT, omega);
+//    cout<<"beta="<<(1-x)/(1+x)<<endl;
+    apply_boost_to(0,0,(1-x)/(1+x),kOut);
+//    println_4v("RamboEP::next kOut",kOut);
     subtract(kIn, kOut, q);
+//    cout<<"RamboER::next: sp(q)="<<mass2(q)<<endl;
+
     wT = wt*8*PI*alpha/Q2*(1+pow(1-Y,2))/pow(Y,2);
     wL = -wt*32*PI*alpha/Q2*(1-Y)/pow(Y,2);
     return true;
