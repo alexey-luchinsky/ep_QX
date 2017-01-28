@@ -29,14 +29,17 @@ RamboEP::~RamboEP() {
     delete ram3;
 }
 
-void RamboEP::next() {
+bool RamboEP::next() {
 //    cout<<"RamboEP::next, start"<<endl;
     wt=1./(16*PI*PI);
+    if(maxY<minY) {
+        wt=0; wT=0; wL=0; return false;        
+    };
     Y = random->rand(minY, maxY);
     wt *= maxY-minY;
     dbl_type _maxQ2=min(maxQ2,S*Y);
     if(_maxQ2<minQ2) {
-        wt=0; wT=0; wL=0; return;
+        wt=0; wT=0; wL=0; return false;
     };
 //    cout<<"RamboEP::next, end"<<endl;
     Q2 = random->rand(minQ2, _maxQ2);
@@ -48,11 +51,12 @@ void RamboEP::next() {
     subtract(kIn, kOut, q);
     wT = wt*8*PI*alpha/Q2*(1+pow(1-Y,2))/pow(Y,2);
     wL = -wt*32*PI*alpha/Q2*(1-Y)/pow(Y,2);
+    return true;
 }
 
-void RamboEP::next(dbl_type (&kp_)[4], dbl_type (&k1)[4], dbl_type (&k2)[4]) {
+bool RamboEP::next(dbl_type (&kp_)[4], dbl_type (&k1)[4], dbl_type (&k2)[4]) {
     dbl_type Phard[4];
-    next();
+    if(!next()) return false;
     set_v4(kp_, kOut);
     sum(q,P,Phard);      // Phard = q+p
     dbl_type _wt=ram2->next(sqrt(W2),k1,k2);
@@ -60,6 +64,7 @@ void RamboEP::next(dbl_type (&kp_)[4], dbl_type (&k1)[4], dbl_type (&k2)[4]) {
     wt *= _wt;
     wT *= _wt;
     wL *= _wt;
+    return true;
 }
 
 

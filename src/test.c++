@@ -246,7 +246,7 @@ TEST_CASE("Q2_cut") {
     ramEP.minQ2=minQ2; ramEP.maxQ2=maxQ2;
     dbl_type sumEP = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        ramEP.next(kp, k1, k2);
+        if(!ramEP.next(kp, k1, k2)) continue;;
         dbl_type matr2T = 0;
         dbl_type matr2L = -4 * PI * alpha * ramEP.Q2;
         sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
