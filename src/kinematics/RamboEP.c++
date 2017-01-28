@@ -30,10 +30,15 @@ RamboEP::~RamboEP() {
 }
 
 void RamboEP::next() {
+//    cout<<"RamboEP::next, start"<<endl;
     wt=1./(16*PI*PI);
     Y = random->rand(minY, maxY);
     wt *= maxY-minY;
     dbl_type _maxQ2=min(maxQ2,S*Y);
+    if(_maxQ2<minQ2) {
+        wt=0; wT=0; wL=0; return;
+    };
+//    cout<<"RamboEP::next, end"<<endl;
     Q2 = random->rand(minQ2, _maxQ2);
     wt *= _maxQ2-minQ2;
     W2 = -Q2+S*Y;

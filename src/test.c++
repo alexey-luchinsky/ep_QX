@@ -218,3 +218,39 @@ TEST_CASE("toy2EP") {
     };
     REQUIRE(sum == Approx(sumEP).epsilon(0.01));
 }
+
+TEST_CASE("Q2_cut") {
+     dbl_type ecm = 100;
+     dbl_type minQ2=pow(ecm,2)/3, maxQ2=2*pow(ecm,2)/3;
+    Random *random_generator = new Random();
+    dbl_type m1 = random_generator->rand(0, ecm / 2), m2 = random_generator->rand(0, ecm / 2);
+    int nEv = 1e6;
+    dbl_type P[4], k[4], kp[4], k1[4], k2[4];
+    set_v4(P, 0, 0, ecm / 2, ecm / 2);
+    set_v4(k, 0, 0, -ecm / 2, ecm / 2);
+    dbl_type s = ecm*ecm, t, u, Q2;
+    dbl_type PI = acos(-1), alpha = 1. / 137;
+    // ram3
+    Rambo3 ram3(0, m1, m2, random_generator);
+    dbl_type sum = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        dbl_type wt = ram3.next(ecm, kp, k1, k2);
+        u = subtract_mass2(k, kp);
+        t = subtract_mass2(P, kp); Q2=-t;
+        if(Q2<minQ2 || Q2>maxQ2) continue;
+        dbl_type matr2 = -128 * PI * PI * alpha * alpha * s * u / pow(s + u, 2);
+        sum += matr2 * wt / nEv;
+    }
+    // ep
+    RamboEP ramEP(ecm, random_generator, m1, m2);
+    ramEP.minQ2=minQ2; ramEP.maxQ2=maxQ2;
+    dbl_type sumEP = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        ramEP.next(kp, k1, k2);
+        dbl_type matr2T = 0;
+        dbl_type matr2L = -4 * PI * alpha * ramEP.Q2;
+        sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
+    };
+    REQUIRE(sumEP/sum == Approx(1).epsilon(0.01));
+   
+}
