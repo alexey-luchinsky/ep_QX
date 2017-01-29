@@ -239,7 +239,7 @@ TEST_CASE("Q2_cut") {
 TEST_CASE("ramEPX_kin") {
     dbl_type ecm = 10, x = 0.5;
     RamboEP ramEP(ecm, random_generator);
-    ramEP.next(x);
+    ramEP.next(kp, k1, k2, x);
     dbl_type Pg[4];
     set_v4(P,ramEP.P);
     set_v4(k,ramEP.kIn);
@@ -250,10 +250,18 @@ TEST_CASE("ramEPX_kin") {
     REQUIRE(Pg[1] == Approx(x*P[1]));
     REQUIRE(Pg[2] == Approx(x*P[2]));
     REQUIRE(Pg[3] == Approx(x*P[3]));
-//    println_4v("PhardG=", PhardG);
     REQUIRE(mass2(q)==Approx(-ramEP.Q2));
     REQUIRE( sp(P,q)/sp(P,k) == Approx(ramEP.Y));
     REQUIRE(sum_mass2(q,Pg)==Approx(ramEP.W2));
+    dbl_type PhardIn[4], PhardOut[4];
+    sum(Pg,q,PhardIn); // PhardIn = Pg + q
+    sum(k1,k2,PhardOut); // PhardOut = k1+k2
+    REQUIRE(mass2(PhardIn)==Approx(ramEP.W2));
+    REQUIRE(mass2(PhardOut)==Approx(ramEP.W2));
+    REQUIRE(PhardIn[0]==Approx(PhardOut[0]));
+    REQUIRE(PhardIn[1]==Approx(PhardOut[1]));
+    REQUIRE(PhardIn[2]==Approx(PhardOut[2]));
+    REQUIRE(PhardIn[3]==Approx(PhardOut[3]));
 }
 
 

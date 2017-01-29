@@ -58,8 +58,7 @@ bool RamboEP::next(dbl_type (&kp_)[4], dbl_type (&k1)[4], dbl_type (&k2)[4], dbl
     dbl_type Phard[4];
     if(!next(x)) return false;
     set_v4(kp_, kOut);
-    sum(q,P,Phard);      // Phard = q+p
-    sum(q,Pg,PhardG);      // PhardG = q+Pg
+    sum(q,Pg,Phard);      // Phard = q+p
     dbl_type _wt=ram2->next(sqrt(W2),k1,k2);
     apply_boost_to(Phard,k1);  apply_boost_to(Phard, k2);
     wt *= _wt;

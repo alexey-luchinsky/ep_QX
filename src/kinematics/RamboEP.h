@@ -27,7 +27,7 @@ public:
     dbl_type m1, m2, m3;
     dbl_type Q2, minQ2, maxQ2;
     dbl_type Y, minY, maxY;
-    dbl_type P[4], kIn[4], kOut[4], q[4], Pg[4], PhardG[4];
+    dbl_type P[4], kIn[4], kOut[4], q[4], Pg[4];
     dbl_type W2;
     dbl_type wT, wL, wt;
     dbl_type PI;
