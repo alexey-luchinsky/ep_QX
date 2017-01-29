@@ -113,13 +113,13 @@ TEST_CASE("EPflat") {
         sumEP += ramEP.wt;
     };
     sumEP = sumEP / nEv;
-    REQUIRE(sum == Approx(sumEP).epsilon(1e-4));
+    REQUIRE(sumEP / sum == Approx(1).epsilon(0.01));
 }
 
 TEST_CASE("toy1EP") {
     dbl_type ecm = 10;
     dbl_type m1 = random_generator->rand(0, ecm / 2), m2 = random_generator->rand(0, ecm / 2);
-    int nEv = 1e5;
+    int nEv = 1e6;
     set_v4(P, 0, 0, ecm / 2, ecm / 2);
     set_v4(k, 0, 0, -ecm / 2, ecm / 2);
     dbl_type s = ecm*ecm, t, u;
@@ -143,7 +143,7 @@ TEST_CASE("toy1EP") {
         dbl_type matr2L = -4 * PI * alpha * ramEP.Q2;
         sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
     };
-    REQUIRE(sumEP == Approx(sum).epsilon(0.01));
+    REQUIRE(sumEP / sum == Approx(1).epsilon(0.01));
 };
 
 TEST_CASE("toy2EP") {
@@ -196,7 +196,7 @@ TEST_CASE("toy2EP") {
 
         sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
     };
-    REQUIRE(sum == Approx(sumEP).epsilon(0.01));
+    REQUIRE(sumEP / sum == Approx(1).epsilon(0.01));
 }
 
 TEST_CASE("Q2_cut") {
@@ -246,7 +246,7 @@ TEST_CASE("ramEPX_kin") {
     set_v4(Pg,ramEP.Pg);
     set_v4(q,ramEP.q);
     REQUIRE(mass2(Pg)==Approx(0));
-    REQUIRE(Pg[0] == Approx(P[0]));
+    REQUIRE(Pg[0] == Approx(x*P[0]));
     REQUIRE(Pg[1] == Approx(x*P[1]));
     REQUIRE(Pg[2] == Approx(x*P[2]));
     REQUIRE(Pg[3] == Approx(x*P[3]));
