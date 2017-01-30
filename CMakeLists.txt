@@ -40,33 +40,12 @@ message(STATUS "LHAPDF_LIBRARY = ${LHAPDF_LIBRARY}")
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${LHAPDF_INCLUDE})
 
-include_directories(./)
-include_directories(kinematics)
-
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/kinematics")
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIR})
 
-file(GLOB_RECURSE SOURCE_FILES "src/kinematics/*.cpp" "src/*.c++")
-add_executable(test.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/test.c++" ${SOURCE_FILES})
+file(GLOB_RECURSE TESTS_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++" "src/tests/*.c++")
+add_executable(test.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test.c++" ${TESTS_SOURCE_FILES})
 
-#file(GLOB_RECURSE R_SOURCE_FILES "root/*.cpp" "util/*.cpp" "globals/*.cpp" "nlo/nlo_kinematics.cpp")
-#list(REMOVE_ITEM R_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/root/rescale.cpp")
-#list(REMOVE_ITEM R_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/root/export_hists.cpp")
-#list(REMOVE_ITEM R_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/root/export_parton_cs.cpp")
-
-
-#add_executable(export-histograms "root/export_hists.cpp" ${R_SOURCE_FILES})
-#target_link_libraries(export-histograms ${Boost_LIBRARIES})
-#target_link_libraries(getHist ${LHAPDF_LIBRARY})
-#target_link_libraries(export-histograms ${ROOT_LIBRARIES})
-
-#add_executable(rescale "root/rescale.cpp" ${R_SOURCE_FILES})
-#target_link_libraries(rescale ${Boost_LIBRARIES})
-#target_link_libraries(rescale ${LHAPDF_LIBRARY})
-#target_link_libraries(rescale ${ROOT_LIBRARIES})
-
-#add_executable(export-parton-cs "root/export_parton_cs.cpp" ${R_SOURCE_FILES})
-#target_link_libraries(export-parton-cs ${Boost_LIBRARIES})
-#target_link_libraries(getHist ${LHAPDF_LIBRARY})
-#target_link_libraries(export-parton-cs ${ROOT_LIBRARIES})
