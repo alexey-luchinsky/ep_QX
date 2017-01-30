@@ -7,23 +7,27 @@
 #include "kinematics/Rambo2.h"
 #include "kinematics/RamboEP.h"
 
-dbl_type PI = acos(-1), alpha=1./137;
-Random *random_generator=new Random();
+dbl_type PI = acos(-1), alpha = 1. / 137;
+Random *random_generator = new Random();
 dbl_type M, m1, m2, m3;
 dbl_type P[4], k[4], kp[4], q[4], k1[4], k2[4], k3[4], Ptot[4];
-int nEv=1e4;
+int nEv = 1e4;
 dbl_type sum_, sumEP_;
 
 TEST_CASE("sp") {
     M = 3.1;
-    set_v4(P,0,0,0,M); set_v4(k,0,0,M,M);
+    set_v4(P, 0, 0, 0, M);
+    set_v4(k, 0, 0, M, M);
     REQUIRE(sp(P, P) == Approx(pow(M, 2)));
     REQUIRE(sp(k, k) == Approx(0));
     REQUIRE(sp(P, k) == Approx(pow(M, 2)));
 }
 
 TEST_CASE("rambo3") {
-    M = 1; m1 = 0.1; m2 = 0.2; m3 = 0.3;
+    M = 1;
+    m1 = 0.1;
+    m2 = 0.2;
+    m3 = 0.3;
     Rambo3 rambo(m1, m2, m3, random_generator);
     dbl_type wt = rambo.next(M, k1, k2, k3);
     REQUIRE(sp(k1, k1) == Approx(m1 * m1));
@@ -32,7 +36,10 @@ TEST_CASE("rambo3") {
     sum(k1, k2, P);
     sum(k3, P, P);
     REQUIRE(sp(P, P) == Approx(M * M));
-    REQUIRE(P[0] == Approx(0)); REQUIRE(P[1] == Approx(0)); REQUIRE(P[2] == Approx(0)); REQUIRE(P[3] == Approx(M));
+    REQUIRE(P[0] == Approx(0));
+    REQUIRE(P[1] == Approx(0));
+    REQUIRE(P[2] == Approx(0));
+    REQUIRE(P[3] == Approx(M));
 }
 
 TEST_CASE("rambo2") {
@@ -44,15 +51,18 @@ TEST_CASE("rambo2") {
     REQUIRE(sp(k1, k2) == Approx((M * M - m1 * m1 - m2 * m2) / 2));
     sum(k1, k2, P);
     REQUIRE(sp(P, P) == Approx(M * M));
-    REQUIRE(P[0] == Approx(0)); REQUIRE(P[1] == Approx(0)); REQUIRE(P[2] == Approx(0)); REQUIRE(P[3] == Approx(M));
+    REQUIRE(P[0] == Approx(0));
+    REQUIRE(P[1] == Approx(0));
+    REQUIRE(P[2] == Approx(0));
+    REQUIRE(P[3] == Approx(M));
     dbl_type lam = sqrt((1 - pow(m1 + m2, 2) / M / M)*(1 - pow(m1 - m2, 2) / M / M));
     REQUIRE(WT == Approx(lam / 8 / PI));
 }
 
-TEST_CASE("muon","[integration]") {
+TEST_CASE("muon", "[integration]") {
     dbl_type mmu = 1;
     Rambo3 rambo(0, 0, 0, random_generator);
-    set_v4(P,0, 0, 0, mmu);
+    set_v4(P, 0, 0, 0, mmu);
     int nEv = 1e5;
     dbl_type sum = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
@@ -91,7 +101,10 @@ TEST_CASE("ramboEP") {
     REQUIRE(mass2(Ptot) == Approx(rambo.W2));
     sum(kp, k1, k2, Ptot);
     REQUIRE(mass2(Ptot) == Approx(ecm * ecm));
-    REQUIRE(Ptot[0] == Approx(0)); REQUIRE(Ptot[1] == Approx(0)); REQUIRE(Ptot[2] == Approx(0)); REQUIRE(Ptot[3] == Approx(ecm));
+    REQUIRE(Ptot[0] == Approx(0));
+    REQUIRE(Ptot[1] == Approx(0));
+    REQUIRE(Ptot[2] == Approx(0));
+    REQUIRE(Ptot[3] == Approx(ecm));
 }
 
 TEST_CASE("EPflat") {
@@ -241,29 +254,28 @@ TEST_CASE("ramEPX_kin") {
     RamboEP ramEP(ecm, random_generator);
     ramEP.next(kp, k1, k2, x);
     dbl_type Pg[4];
-    set_v4(P,ramEP.P);
-    set_v4(k,ramEP.kIn);
-    set_v4(Pg,ramEP.Pg);
-    set_v4(q,ramEP.q);
-    REQUIRE(mass2(Pg)==Approx(0));
-    REQUIRE(Pg[0] == Approx(x*P[0]));
-    REQUIRE(Pg[1] == Approx(x*P[1]));
-    REQUIRE(Pg[2] == Approx(x*P[2]));
-    REQUIRE(Pg[3] == Approx(x*P[3]));
-    REQUIRE(mass2(q)==Approx(-ramEP.Q2));
-    REQUIRE( sp(P,q)/sp(P,k) == Approx(ramEP.Y));
-    REQUIRE(sum_mass2(q,Pg)==Approx(ramEP.W2));
+    set_v4(P, ramEP.P);
+    set_v4(k, ramEP.kIn);
+    set_v4(Pg, ramEP.Pg);
+    set_v4(q, ramEP.q);
+    REQUIRE(mass2(Pg) == Approx(0));
+    REQUIRE(Pg[0] == Approx(x * P[0]));
+    REQUIRE(Pg[1] == Approx(x * P[1]));
+    REQUIRE(Pg[2] == Approx(x * P[2]));
+    REQUIRE(Pg[3] == Approx(x * P[3]));
+    REQUIRE(mass2(q) == Approx(-ramEP.Q2));
+    REQUIRE(sp(P, q) / sp(P, k) == Approx(ramEP.Y));
+    REQUIRE(sum_mass2(q, Pg) == Approx(ramEP.W2));
     dbl_type PhardIn[4], PhardOut[4];
-    sum(Pg,q,PhardIn); // PhardIn = Pg + q
-    sum(k1,k2,PhardOut); // PhardOut = k1+k2
-    REQUIRE(mass2(PhardIn)==Approx(ramEP.W2));
-    REQUIRE(mass2(PhardOut)==Approx(ramEP.W2));
-    REQUIRE(PhardIn[0]==Approx(PhardOut[0]));
-    REQUIRE(PhardIn[1]==Approx(PhardOut[1]));
-    REQUIRE(PhardIn[2]==Approx(PhardOut[2]));
-    REQUIRE(PhardIn[3]==Approx(PhardOut[3]));
+    sum(Pg, q, PhardIn); // PhardIn = Pg + q
+    sum(k1, k2, PhardOut); // PhardOut = k1+k2
+    REQUIRE(mass2(PhardIn) == Approx(ramEP.W2));
+    REQUIRE(mass2(PhardOut) == Approx(ramEP.W2));
+    REQUIRE(PhardIn[0] == Approx(PhardOut[0]));
+    REQUIRE(PhardIn[1] == Approx(PhardOut[1]));
+    REQUIRE(PhardIn[2] == Approx(PhardOut[2]));
+    REQUIRE(PhardIn[3] == Approx(PhardOut[3]));
 }
-
 
 TEST_CASE("EPflatX") {
     dbl_type ecm = 10;
@@ -288,4 +300,47 @@ TEST_CASE("EPflatX") {
     sumEP = sumEP / nEv;
     REQUIRE(sum == Approx(sumEP).epsilon(1e-4));
 }
+
+
+TEST_CASE("toy1EPX") {
+    dbl_type ecm = 10;
+    dbl_type x = 0.5, ecm_ = sqrt(x) * ecm;
+    dbl_type m1 = random_generator->rand(0, ecm_ / 2), m2 = random_generator->rand(0, ecm_ / 2);
+    int nEv = 1e6;
+    set_v4(k, 0, 0, ecm / 2, ecm / 2);
+    set_v4(P, 0, 0, -ecm / 2, ecm / 2);
+
+    dbl_type s = ecm*ecm, t, u;
+    // ram3
+    Rambo3 ram3(0, m1, m2, random_generator);
+    dbl_type Pg[4];
+    set_v4(Pg, 0, 0, -x * ecm / 2, x * ecm / 2);
+    dbl_type Phard[4];
+    sum(Pg, k, Phard);
+    dbl_type sum = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        dbl_type wt = ram3.next(ecm_, kp, k1, k2);
+        apply_boost_to(Phard, k1);
+        apply_boost_to(Phard, k2);
+        apply_boost_to(Phard, kp);
+
+        dbl_type W2 = sum_mass2(k1, k2);
+        dbl_type s = sum_mass2(k, Pg);
+        dbl_type t = subtract_mass2(k, kp);
+        dbl_type u = subtract_mass2(Pg, kp);
+
+        dbl_type matr2 = -128 * PI * PI * alpha * alpha * s * u / pow(s + u, 2);
+        sum += matr2 * wt / nEv;
+    }
+    // ep
+    RamboEP ramEP(ecm, random_generator, m1, m2);
+    dbl_type sumEP = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        ramEP.next(kp, k1, k2,x);
+        dbl_type matr2T = 0;
+        dbl_type matr2L = -4 * PI * alpha * ramEP.Q2;
+        sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
+    };
+    REQUIRE(sumEP / sum == Approx(1).epsilon(0.01));
+};
 
