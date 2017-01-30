@@ -14,14 +14,6 @@ dbl_type P[4], k[4], kp[4], q[4], k1[4], k2[4], k3[4], Ptot[4];
 int nEv = 1e4;
 dbl_type sum_, sumEP_;
 
-TEST_CASE("sp") {
-    M = 3.1;
-    set_v4(P, 0, 0, 0, M);
-    set_v4(k, 0, 0, M, M);
-    REQUIRE(sp(P, P) == Approx(pow(M, 2)));
-    REQUIRE(sp(k, k) == Approx(0));
-    REQUIRE(sp(P, k) == Approx(pow(M, 2)));
-}
 
 TEST_CASE("rambo3") {
     M = 1;
