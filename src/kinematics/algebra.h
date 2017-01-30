@@ -192,6 +192,14 @@ void println_4v(const string &name, T (&v4)[4]) {
 
 template<typename T>
 inline
+void println_4v_math(const string &name, T (&v4)[4]) {
+    cout << name << "= ";
+    cout << "{" << v4[3] << ", " << v4[0] << ", " << v4[1] << ", " << v4[2] << "};"<<endl;
+}
+
+
+template<typename T>
+inline
 void println_4v(T (&v4)[4]) {
     println_4v("", v4);
 }
