@@ -45,7 +45,6 @@ bool RamboEP::next(dbl_type x) {
     Q2 = random->rand(minQ2, _maxQ2);
     wt *= _maxQ2-minQ2;
     W2 = -Q2+x*S*Y;
-    if(sqrt(W2)<m1+m2) return false;
     dbl_type omega = ecm*(1-Y+Q2/S)/2;
     dbl_type cosT = (1-Y-Q2/S)/(1-Y+Q2/S), sinT=sqrt(1-cosT*cosT);
     set_v4(kOut, 0, omega*sinT, omega*cosT, omega);
@@ -57,15 +56,27 @@ bool RamboEP::next(dbl_type x) {
 
 bool RamboEP::next(dbl_type (&kp_)[4], dbl_type (&k1)[4], dbl_type (&k2)[4], dbl_type x) {
     dbl_type Phard[4];
-    if(!next(x)) return false;
+    if(!next(x)) {
+        wt=0;
+        wL=0; 
+        wT=0;
+        return false;
+    };
+    if(sqrt(W2)<m1+m2) {
+        wt=0;
+        wL=0; 
+        wT=0;
+        return false;
+    };
+
     set_v4(kp_, kOut);
     sum(q,Pg,Phard);      // Phard = q+p
     dbl_type _wt=ram2->next(sqrt(W2),k1,k2);
-    if(_wt<=0) return false;
+//    if(_wt<=0) return false;
 //    cout<<"RamboEP::next _wt="<<_wt<<endl;
 //    println_4v_math("RamboEP::next k1",k1);
 //    println_4v_math("RamboEP::next k2",k2);
-//    apply_boost_to(Phard,k1);  apply_boost_to(Phard, k2);
+    apply_boost_to(Phard,k1);  apply_boost_to(Phard, k2);
     assert(are_equal( mass2(k1), m1*m1));
     assert(are_equal( mass2(k2), m2*m2));
     assert(are_equal( sum_mass2(k1,k2),W2));

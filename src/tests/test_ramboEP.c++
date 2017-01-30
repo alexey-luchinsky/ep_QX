@@ -57,7 +57,7 @@ TEST_CASE("EPflat") {
     Rambo2 ram2(m1, m2, random_generator);
     dbl_type sumEP = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        ramEP.next(kp, k1, k2);
+        if(!ramEP.next(kp, k1, k2)) continue;
         sumEP += ramEP.wt;
     };
     sumEP = sumEP / nEv;
@@ -109,7 +109,7 @@ TEST_CASE("EPflatX") {
     Rambo2 ram2(m1, m2, random_generator);
     dbl_type sumEP = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        ramEP.next(kp, k1, k2, x);
+        if(!ramEP.next(kp, k1, k2, x)) continue;
         sumEP += ramEP.wt;
     };
     sumEP = sumEP / nEv;

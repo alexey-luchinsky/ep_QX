@@ -33,7 +33,7 @@ TEST_CASE("toy1EP") {
     RamboEP ramEP(ecm, random_generator, m1, m2);
     dbl_type sumEP = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        ramEP.next(kp, k1, k2);
+        if(!ramEP.next(kp, k1, k2)) continue;
         dbl_type matr2T = 0;
         dbl_type matr2L = -4 * PI * alpha * ramEP.Q2;
         sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
@@ -76,7 +76,7 @@ TEST_CASE("toy2EP") {
     set_v4(p, ramEP.P);
     dbl_type sumEP = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        ramEP.next(kp, k1, k2);
+        if(!ramEP.next(kp, k1, k2)) continue;
         set_v4(q, ramEP.q);
         dbl_type Q2 = ramEP.Q2, W2 = ramEP.W2;
 
