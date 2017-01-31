@@ -54,18 +54,38 @@ int main(void) {
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
     ramEP->minQ2=0.01; ramEP->maxQ2=0.03;
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
-    int nEv=1e6;
+    int nEv=1e7, nPassed=0, nNegative=0;
     dbl_type sum=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
         while(!kinematics(ramEP, k, kp, k1, k2, k3, p)) {};
 
+        dbl_type wt=ramEP->wt;
         dbl_type matr2=getMatr2(k, kp, k1, k2, k3, p);
-        assert(matr2>0);
-        tup.Fill(ramEP->Q2,ramEP->Y,matr2,ramEP->wt);
-        sum += matr2*ramEP->wt/nEv;
+        if(!(matr2>0)) {
+//            cout<<"======= matr2<0 ======="<<endl;
+//            println_4v("k",k);
+//            println_4v("kp",kp);
+//            println_4v("k1",k1);
+//            println_4v("k2",k2);
+//            println_4v("k3",k3);
+//            println_4v("p",p);
+//            cout<<" W2="<<ramEP->W2<<endl;
+//            cout<<" Q2="<<ramEP->Q2<<endl;
+//            cout<<" Y="<<ramEP->Y<<endl;
+//            cout<<" wt="<<wt<<endl;
+//            cout<<"matr2:"<<matr2<<endl;
+            nNegative++;
+            continue;
+        };
+//        assert(matr2>0);
+        tup.Fill(ramEP->Q2,ramEP->Y,matr2,wt/nEv);
+        sum += matr2*wt/nEv;
+        ++nPassed;
     };
     tup.Write();
     file.Save();
     cout<<" sum="<<sum<<endl;
+    cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
+    cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
 }
