@@ -32,7 +32,8 @@ int main(void) {
 
         cout<<" Q2="<<Q2<<"; (* vs "<<ramEP.Q2<<"*)"<<endl;
         cout<<" s="<<s<<"; (* vs "<<sum_mass2(p,k3)<<"*)"<<endl;
-        cout<<" t="<<t<<"; (* vs "<<subtract_mass2(k2, k3)<<endl;
+        cout<<" t="<<t<<"; (* vs "<<subtract_mass2(k2, k3)<<"*)"<<endl;
+        cout<<" u="<<u<<"; (* vs "<<subtract_mass2(k2, p)<<"*)"<<endl;
 
         assert(are_equal(Q2, ramEP.Q2));
         assert(are_equal(s, sum_mass2(p, k3)));
@@ -54,7 +55,9 @@ int main(void) {
         cout << "matr2L=" << matr2L << endl;
 
         dbl_type matr2 = ramEP.wT * matr2T + ramEP.wL*matr2L;
+        matr2=-matr2;
         cout << " matr2=" << matr2 << endl;
+        assert(matr2>0);
     }
     return 0;
 }
