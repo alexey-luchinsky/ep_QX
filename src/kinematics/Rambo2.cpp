@@ -30,6 +30,7 @@ dbl_type Rambo2::next(dbl_type ecm, dbl_type(&k1)[4], dbl_type(&k2)[4]) {
     k1[1]=mom*sinTH*sin(phi);    k2[1]=-k1[1];
     k1[2]=mom*cosTH;    k2[2]=-k1[2];
     WT *= mom/ecm/(16*PI*PI);
+    if(!(WT>=0)) return -1;
     return WT;
 }
 

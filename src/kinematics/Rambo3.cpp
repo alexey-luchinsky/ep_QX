@@ -83,5 +83,6 @@ dbl_type Rambo3::next(dbl_type ecm, dbl_type (&k1)[4], dbl_type (&k2)[4], dbl_ty
     apply_boost_to(q, k2);
 
     WT *= pow(2 * PI, 3+4);
+    if(!(WT>=0)) return -1;
     return WT;
 }
