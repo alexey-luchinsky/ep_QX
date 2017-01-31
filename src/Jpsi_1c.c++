@@ -49,26 +49,23 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
 
 int main(void) {
     TFile file("out.root","RECREATE");
-    TNtuple tup("tup","tup","Q2:matr2");
+    TNtuple tup("tup","tup","Q2:Y:matr2:wt");
     Random *random=new Random();
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
+    ramEP->minQ2=0.01; ramEP->maxQ2=0.03;
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
     int nEv=1e6;
+    dbl_type sum=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
         while(!kinematics(ramEP, k, kp, k1, k2, k3, p)) {};
-            assert(is_zero(mass2(k)));       
-            assert(is_zero(mass2(kp)));
-            assert(are_equal(sum_mass2(p,k3),ramEP->W2));
-            assert(are_equal(mass2(k1),-ramEP->Q2)); 
-            assert(are_equal(mass2(p),Mcc*Mcc)); 
-            assert(is_zero(mass2(k3)));
-            assert(are_equal(sum_mass2(k,k2),x*ecm*ecm));
 
         dbl_type matr2=getMatr2(k, kp, k1, k2, k3, p);
         assert(matr2>0);
-        tup.Fill(ramEP->Q2,matr2);
+        tup.Fill(ramEP->Q2,ramEP->Y,matr2,ramEP->wt);
+        sum += matr2*ramEP->wt/nEv;
     };
     tup.Write();
     file.Save();
+    cout<<" sum="<<sum<<endl;
 }
