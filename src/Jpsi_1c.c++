@@ -1,9 +1,28 @@
 #include "kinematics/RamboEP.h"
 #include "TFile.h"
 #include "TNtuple.h"
-
+#include "TH1.h"
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <sys/stat.h>
 dbl_type Mcc=3.1, mc=Mcc/2, ecm=10, x=0.1;
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
+
+void write_histogram_to_file(TH1F &histogram, string file_name) {
+    const char *__file_name__ = file_name.c_str();
+    remove(__file_name__);
+    ofstream file;
+
+    file.open(__file_name__);
+    for (int i = 1; i <= histogram.GetNbinsX(); i++)
+        file << setiosflags(ios::scientific) << histogram.GetBinCenter(i) <<
+        " " << setiosflags(ios::scientific) << histogram.GetBinContent(i) / histogram.GetBinWidth(i) <<
+        " " << setiosflags(ios::scientific) << histogram.GetBinError(i) / histogram.GetBinWidth(i) << endl;
+
+    file.close();
+}
+
 
 bool kinematics(RamboEP *ramEP, 
         dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
@@ -47,12 +66,18 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
                     sp(k3,kp)*(-6*pow(mc,2) + sp(k3,p))*sp(kp,p))))))/9.;
 }
 
+
+
 int main(void) {
-    TFile file("out.root","RECREATE");
-    TNtuple tup("tup","tup","Q2:Y:matr2:wt");
+    TNtuple tup("tup","tup","Q2:Y:pTpsi:matr2:wt");
     Random *random=new Random();
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
-    ramEP->minQ2=0.01; ramEP->maxQ2=0.03;
+    ramEP->minQ2=0.3; ramEP->maxQ2=0.5;
+    string dir="Q2_"+std::to_string(ramEP->minQ2)+"_"+std::to_string(ramEP->maxQ2);
+    system(("mkdir "+dir).c_str());
+    TFile file((dir+"/out.root").c_str(),"RECREATE");
+    TH1F hQ2("hQ2","hQ2",20,ramEP->minQ2,ramEP->maxQ2);
+    TH1F hQ2M("hQ2M","hQ2M",20,ramEP->minQ2,ramEP->maxQ2);
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
     int nEv=1e7, nPassed=0, nNegative=0;
     dbl_type sum=0;
@@ -79,12 +104,18 @@ int main(void) {
             continue;
         };
 //        assert(matr2>0);
-        tup.Fill(ramEP->Q2,ramEP->Y,matr2,wt/nEv);
+        tup.Fill(ramEP->Q2,ramEP->Y,pT(p), matr2,wt/nEv);
+        hQ2M.Fill(ramEP->Q2,matr2*wt/nEv);
+        hQ2.Fill(ramEP->Q2,wt/nEv);
         sum += matr2*wt/nEv;
         ++nPassed;
     };
-    tup.Write();
+    tup.Write(); hQ2.Write(); hQ2M.Write();
     file.Save();
+    write_histogram_to_file(hQ2, (dir+"/hQ2.txt").c_str());
+    write_histogram_to_file(hQ2M, (dir+"/hQ2M.txt").c_str());
+
+    cout<<" minQ2="<<ramEP->minQ2<<" maxQ2="<<ramEP->maxQ2<<endl;
     cout<<" sum="<<sum<<endl;
     cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
     cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;

@@ -95,19 +95,20 @@ TEST_CASE("toy2EP") {
 }
 
 TEST_CASE("Q2_cut") {
-    dbl_type ecm = 100;
-    dbl_type minQ2 = pow(ecm, 2) / 3, maxQ2 = 2 * pow(ecm, 2) / 3;
-    dbl_type m1 = random_generator->rand(0, ecm / 2), m2 = random_generator->rand(0, ecm / 2);
+    dbl_type ecm = 10;
+    dbl_type x=0.5, ecm_=sqrt(x)*ecm;
+    dbl_type minQ2 = pow(ecm_, 2) / 3, maxQ2 = 2 * pow(ecm_, 2) / 3;
+    dbl_type m1 = random_generator->rand(0, ecm_ / 2), m2 = random_generator->rand(0, ecm_ / 2);
     int nEv = 1e6;
-    set_v4(P, 0, 0, ecm / 2, ecm / 2);
-    set_v4(k, 0, 0, -ecm / 2, ecm / 2);
-    dbl_type s = ecm*ecm, t, u, Q2;
+    set_v4(P, 0, 0, ecm_ / 2, ecm_ / 2);
+    set_v4(k, 0, 0, -ecm_ / 2, ecm_ / 2);
+    dbl_type s = ecm_*ecm_, t, u, Q2;
     dbl_type PI = acos(-1), alpha = 1. / 137;
     // ram3
     Rambo3 ram3(0, m1, m2, random_generator);
     dbl_type sum = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        dbl_type wt = ram3.next(ecm, kp, k1, k2);
+        dbl_type wt = ram3.next(ecm_, kp, k1, k2);
         u = subtract_mass2(k, kp);
         t = subtract_mass2(P, kp);
         Q2 = -t;
@@ -121,12 +122,12 @@ TEST_CASE("Q2_cut") {
     ramEP.maxQ2 = maxQ2;
     dbl_type sumEP = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        if (!ramEP.next(kp, k1, k2)) continue;
-        ;
+        if (!ramEP.next(kp, k1, k2,x)) continue;
         dbl_type matr2T = 0;
         dbl_type matr2L = -4 * PI * alpha * ramEP.Q2;
         sumEP += (matr2L * ramEP.wL + matr2T * ramEP.wT) / nEv;
     };
+    cout<<"Q2_cut: sum="<<sum<<" sumEP="<<sumEP<<" sumEP/sum="<<sumEP/sum<<endl;
     REQUIRE(sumEP / sum == Approx(1).epsilon(0.01));
 
 }
