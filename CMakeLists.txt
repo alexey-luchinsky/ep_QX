@@ -51,3 +51,5 @@ add_executable(test.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test.c++" ${TESTS
 
 file(GLOB_RECURSE Jpsi_1c_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++")
 add_executable(Jpsi_1c.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/Jpsi_1c.c++" ${Jpsi_1c_SOURCE_FILES})
+target_link_libraries(Jpsi_1c.exe ${ROOT_LIBRARIES})
+

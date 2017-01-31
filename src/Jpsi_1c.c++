@@ -1,12 +1,17 @@
 #include "kinematics/RamboEP.h"
+#include "TFile.h"
+#include "TNtuple.h"
 
 int main(void) {
+    TFile file("out.root","RECREATE");
+    TNtuple tup("tup","tup","Q2:matr2");
     dbl_type Mcc=3.1, mc=Mcc/2, ecm=10, x=0.1;
     Random *random=new Random();
     RamboEP ramEP(ecm, random, Mcc,0);
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
-    int nEv=100;
+    int nEv=1e6;
     for(int iEv=0; iEv<nEv; ++iEv) {
+        if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
         while(!ramEP.next(kp,p,k3,x));
         set_v4(k,ramEP.kIn);                // k
             assert(is_zero(mass2(k)));       
@@ -39,7 +44,9 @@ int main(void) {
               sp(k2,p)*(pow(sp(k2,p),2)*pow(sp(k3,kp),2) + sp(k2,p)*(-(pow(sp(kp,p),2)*sp(k3,p)) + pow(sp(k3,kp),2)*(-4*pow(mc,2) + sp(k3,p)) + 
                     2*pow(mc,2)*sp(k3,kp)*sp(kp,p)) + sp(k3,p)*(6*pow(mc,2)*pow(sp(k3,kp),2) + pow(sp(kp,p),2)*(-2*pow(mc,2) + sp(k3,p)) + 
                     sp(k3,kp)*(-6*pow(mc,2) + sp(k3,p))*sp(kp,p))))))/9.;
-        cout<<" matr2="<<matr2<<endl;
         assert(matr2>0);
+        tup.Fill(ramEP.Q2,matr2);
     };
+    tup.Write();
+    file.Save();
 }
