@@ -76,18 +76,23 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
 int main(void) {
     string pdf_set_name="ct10";
     lhapdf_pdf=LHAPDF::mkPDF(pdf_set_name,0);
-    
-    TNtuple tup("tup","tup","Q2:Y:pTpsi:matr2:wt:pdf");
     Random *random=new Random();
+
+    // experimental conditions from Kinehl
+    ecm=300;
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
-    dbl_type minQ2=0.01, maxQ2=0.3;
+    dbl_type minQ2=2, maxQ2=80;
     ramEP->set_minmaxQ2(minQ2, maxQ2);
+    dbl_type minW2=pow(40,2), maxW2=pow(180,2);
+    
+    
+    TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:matr2:wt:pdf");
+    TH1F hPT2("hPT2","hPT2",20,1,30); hPT2.Sumw2();
     TFile file("out.root","RECREATE");
 
-    x=0.1;
     dbl_type Q2_scale=pow(Mcc,2);
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
-    int nEv=1e7, nPassed=0, nNegative=0;
+    int nEv=1e8, nPassed=0, nNegative=0;
     dbl_type sum=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
@@ -101,13 +106,16 @@ int main(void) {
             nNegative++;
             continue;
         };
-        tup.Fill(ramEP->Q2,ramEP->Y,pT(p), matr2,wt/nEv, pdf);
+        dbl_type W2=ramEP->W2;
+        if(W2<minW2||W2>maxW2) continue;
+        tup.Fill(ramEP->Q2,ramEP->Y,pT(p), W2, matr2,wt/nEv, pdf);
+        hPT2.Fill(pT_squared(p),matr2*wt*pdf);
         sum += matr2*wt/nEv;
         ++nPassed;
     };
-    tup.Write();
+    tup.Write(); hPT2.Write();
     file.Save();
-
+    write_histogram_to_file(hPT2,"hPT2.hst");
     cout<<" sum="<<sum<<endl;
     cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
     cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
