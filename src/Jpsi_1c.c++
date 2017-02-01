@@ -8,6 +8,8 @@
 #include <sys/stat.h>
 dbl_type Mcc=3.1, mc=Mcc/2, ecm=100, x=0.1, ecm_=sqrt(x)*ecm;
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
+#include "LHAPDF/LHAPDF.h"
+LHAPDF::PDF *lhapdf_pdf;
 
 void write_histogram_to_file(TH1F &histogram, string file_name) {
     const char *__file_name__ = file_name.c_str();
@@ -70,6 +72,8 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
 
 
 int main(void) {
+    string pdf_set_name="ct10";
+    lhapdf_pdf=LHAPDF::mkPDF(pdf_set_name,0);
     TNtuple tup("tup","tup","Q2:Y:pTpsi:matr2:wt");
     Random *random=new Random();
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
