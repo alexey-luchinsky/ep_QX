@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sys/stat.h>
-dbl_type Mcc=3.1, mc=Mcc/2, ecm=10, x=0.1;
+dbl_type Mcc=3.1, mc=Mcc/2, ecm=100, x=0.1, ecm_=sqrt(x)*ecm;
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
 
 void write_histogram_to_file(TH1F &histogram, string file_name) {
@@ -73,8 +73,9 @@ int main(void) {
     TNtuple tup("tup","tup","Q2:Y:pTpsi:matr2:wt");
     Random *random=new Random();
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
-    ramEP->minQ2=0.1; ramEP->maxQ2=0.3;
-    string dir="Q2_"+std::to_string(ramEP->minQ2)+"_"+std::to_string(ramEP->maxQ2);
+    dbl_type fMinQ2=0.1, fMaxQ2=0.3;
+    ramEP->set_minmaxQ2(fMinQ2*x*ecm*ecm, fMaxQ2*x*ecm*ecm);
+    string dir="Q2_"+std::to_string(fMinQ2)+"_"+std::to_string(fMaxQ2);
     system(("mkdir "+dir).c_str());
     TFile file((dir+"/out.root").c_str(),"RECREATE");
     TH1F hQ2("hQ2","hQ2",20,ramEP->minQ2,ramEP->maxQ2);
@@ -89,18 +90,6 @@ int main(void) {
         dbl_type wt=ramEP->wt;
         dbl_type matr2=getMatr2(k, kp, k1, k2, k3, p);
         if(!(matr2>0)) {
-//            cout<<"======= matr2<0 ======="<<endl;
-//            println_4v("k",k);
-//            println_4v("kp",kp);
-//            println_4v("k1",k1);
-//            println_4v("k2",k2);
-//            println_4v("k3",k3);
-//            println_4v("p",p);
-//            cout<<" W2="<<ramEP->W2<<endl;
-//            cout<<" Q2="<<ramEP->Q2<<endl;
-//            cout<<" Y="<<ramEP->Y<<endl;
-//            cout<<" wt="<<wt<<endl;
-//            cout<<"matr2:"<<matr2<<endl;
             nNegative++;
             continue;
         };
@@ -116,7 +105,7 @@ int main(void) {
     write_histogram_to_file(hQ2, (dir+"/hQ2.txt").c_str());
     write_histogram_to_file(hQ2M, (dir+"/hQ2M.txt").c_str());
 
-    cout<<" minQ2="<<ramEP->minQ2<<" maxQ2="<<ramEP->maxQ2<<endl;
+    cout<<" fMinQ2="<<fMinQ2<<" fMaxQ2="<<fMaxQ2<<endl;
     cout<<" sum="<<sum<<endl;
     cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
     cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
