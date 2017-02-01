@@ -6,10 +6,8 @@
 #include <fstream>
 #include <iomanip>
 #include <sys/stat.h>
-dbl_type Mcc=3.1, mc=Mcc/2;
+dbl_type Mcc=3.1, mc=Mcc/2, ecm=100, x=0.1, ecm_=sqrt(x)*ecm;
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
-dbl_type ecm=100, x;
-
 #include "LHAPDF/LHAPDF.h"
 LHAPDF::PDF *lhapdf_pdf;
 
@@ -76,24 +74,22 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
 int main(void) {
     string pdf_set_name="ct10";
     lhapdf_pdf=LHAPDF::mkPDF(pdf_set_name,0);
-    
-    TNtuple tup("tup","tup","Q2:Y:pTpsi:matr2:wt:pdf");
+    TNtuple tup("tup","tup","Q2:Y:pTpsi:matr2:wt");
     Random *random=new Random();
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
-    dbl_type minQ2=0.01, maxQ2=0.3;
-    ramEP->set_minmaxQ2(minQ2, maxQ2);
-    TFile file("out.root","RECREATE");
-
-    x=0.1;
-    dbl_type Q2_scale=pow(Mcc,2);
+    dbl_type fMinQ2=0.1, fMaxQ2=0.3;
+    ramEP->set_minmaxQ2(fMinQ2*x*ecm*ecm, fMaxQ2*x*ecm*ecm);
+    string dir="Q2_"+std::to_string(fMinQ2)+"_"+std::to_string(fMaxQ2);
+    system(("mkdir "+dir).c_str());
+    TFile file((dir+"/out.root").c_str(),"RECREATE");
+    TH1F hQ2("hQ2","hQ2",20,ramEP->minQ2,ramEP->maxQ2);
+    TH1F hQ2M("hQ2M","hQ2M",20,ramEP->minQ2,ramEP->maxQ2);
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
     int nEv=1e7, nPassed=0, nNegative=0;
     dbl_type sum=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
-        x=random->rand(0,1);
         if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
-        dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
 
         dbl_type wt=ramEP->wt;
         dbl_type matr2=getMatr2(k, kp, k1, k2, k3, p);
@@ -101,13 +97,19 @@ int main(void) {
             nNegative++;
             continue;
         };
-        tup.Fill(ramEP->Q2,ramEP->Y,pT(p), matr2,wt/nEv, pdf);
+//        assert(matr2>0);
+        tup.Fill(ramEP->Q2,ramEP->Y,pT(p), matr2,wt/nEv);
+        hQ2M.Fill(ramEP->Q2,matr2*wt/nEv);
+        hQ2.Fill(ramEP->Q2,wt/nEv);
         sum += matr2*wt/nEv;
         ++nPassed;
     };
-    tup.Write();
+    tup.Write(); hQ2.Write(); hQ2M.Write();
     file.Save();
+    write_histogram_to_file(hQ2, (dir+"/hQ2.txt").c_str());
+    write_histogram_to_file(hQ2M, (dir+"/hQ2M.txt").c_str());
 
+    cout<<" fMinQ2="<<fMinQ2<<" fMaxQ2="<<fMaxQ2<<endl;
     cout<<" sum="<<sum<<endl;
     cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
     cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
