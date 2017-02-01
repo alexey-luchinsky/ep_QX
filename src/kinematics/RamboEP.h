@@ -20,6 +20,9 @@ public:
     bool next(dbl_type x=1);
     void set_minQ2(dbl_type _minQ2);
     void set_maxQ2(dbl_type _maxQ2);
+    void set_minY(dbl_type _minY) { minY=_minY;}
+    void set_maxY(dbl_type _maxY) {maxY=_maxY;}
+    void set_minmaxY(dbl_type _minY, dbl_type _maxY) {set_minY(_minY); set_maxY(maxY);}
     void set_minmaxQ2(dbl_type _minQ2, dbl_type _maxQ2);
     bool next(dbl_type (&_kp)[4], dbl_type (&k1)[4], dbl_type (&k2)[4], dbl_type x=1);
 //private:
