@@ -151,27 +151,27 @@ TEST_CASE("Q2cut_flat") {
 }
 
 TEST_CASE("Q2cut_flat_sum") {
-    dbl_type ecm = 10;
+    dbl_type ecm = 100;
     dbl_type x = 0.5, ecm_=sqrt(x)*ecm, s_=ecm_*ecm_;
     
-    int nEv = 1e5;
+    int nEv = 1e7;
     dbl_type m1 = random_generator->rand(0, ecm_/ 2), 
             m2 = random_generator->rand(0, ecm_ / 2);
-
-    dbl_type minQ2=0.1*s_, midQ2=0.5*s_, maxQ2=0.9*s_;
+    dbl_type minQ2=0, midQ2=0.5*s_, maxQ2=s_;
     RamboEP ramEP_all(ecm, random_generator, m1, m2); ramEP_all.set_minmaxQ2(minQ2,maxQ2);
     RamboEP ramEP_left(ecm, random_generator, m1, m2); ramEP_left.set_minmaxQ2(minQ2, midQ2);
     RamboEP ramEP_right(ecm, random_generator, m1, m2); ramEP_right.set_minmaxQ2(midQ2, maxQ2);
     dbl_type sum_all = 0, sum_left=0, sum_right=0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        if(!ramEP_all.next(kp, k1, k2, x)) continue;
-        if(!ramEP_left.next(kp, k1, k2, x)) continue;
-        if(!ramEP_right.next(kp, k1, k2, x)) continue;
+        ramEP_all.next(x);  ramEP_left.next(x); ramEP_right.next(x);
         sum_all += ramEP_all.wt/nEv;
         sum_left += ramEP_left.wt/nEv;
         sum_right += ramEP_right.wt/nEv;
     };
     dbl_type sum_sum=sum_left+sum_right;
     cout<<"[Q2cut_flat_sum] sum_all="<<sum_all<<" sum_sum="<<sum_sum<<" sum_all/sum_sum="<<sum_all/sum_sum<<endl;
-    REQUIRE(sum_all/sum_sum==Approx(sum_all/sum_sum).epsilon(0.01));
+    cout<<"[Q2cut_flat_sum] ramEP_all.nFault="<<ramEP_all.nFault<<
+            " ramEP_left.nFault="<<ramEP_left.nFault<<
+            " ramEP_right.nFault="<<ramEP_right.nFault<<endl;
+    REQUIRE(sum_all/sum_sum==Approx(1).epsilon(0.01));
 }

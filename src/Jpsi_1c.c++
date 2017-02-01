@@ -84,7 +84,7 @@ int main(void) {
     dbl_type sum=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
-        while(!kinematics(ramEP, k, kp, k1, k2, k3, p)) {};
+        kinematics(ramEP, k, kp, k1, k2, k3, p);
 
         dbl_type wt=ramEP->wt;
         dbl_type matr2=getMatr2(k, kp, k1, k2, k3, p);
@@ -120,4 +120,5 @@ int main(void) {
     cout<<" sum="<<sum<<endl;
     cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
     cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
+    cout<<ramEP->nFault<<" faults in ramEP"<<endl;
 }

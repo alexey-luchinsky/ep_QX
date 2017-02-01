@@ -35,6 +35,7 @@ public:
     dbl_type wT, wL, wt;
     dbl_type PI;
     dbl_type alpha;
+    int nFault;
 };
 
 #endif	/* RAMBOEP_H */

@@ -22,6 +22,7 @@ RamboEP::RamboEP(dbl_type ecm_, Random *random_, dbl_type _m1, dbl_type _m2, dbl
     minY=0; maxY=1;
     PI=acos(-1);
     alpha = 1./137;
+    nFault=0;
 }
 
 RamboEP::~RamboEP() {
@@ -85,18 +86,19 @@ bool RamboEP::next(dbl_type (&kp_)[4], dbl_type (&k1)[4], dbl_type (&k2)[4], dbl
     dbl_type _wt=ram2->next(sqrt(W2),_k1, _k2);
     if(!(_wt>=0)) ok=false;
     if(!ok) {
+        nFault++;
         wt=0; wT=0; wL=0;
         return false;
     };
     set_v4(k1,_k1); set_v4(k2,_k2);
     apply_boost_to(Phard,k1);  apply_boost_to(Phard, k2);
-//    if(!are_equal( mass2(k1), m1*m1)) {
-//        cout<<" Error at RamEP::next\t k1^2 != m1^2"<<endl;
-//        cout<<" W="<<sqrt(W2)<<endl;
-//        println_4v("Phard",Phard);
-//        println_4v("_k1",_k1);
-//        println_4v("k1",k1);
-//    };
+    if(!are_equal( mass2(k1), m1*m1)) {
+        cout<<" Error at RamEP::next\t k1^2 != m1^2"<<endl;
+        cout<<" W="<<sqrt(W2)<<endl;
+        println_4v("Phard",Phard);
+        println_4v("_k1",_k1);
+        println_4v("k1",k1);
+    };
     assert(are_equal( mass2(k1), m1*m1));
     assert(are_equal( mass2(k2), m2*m2));
     assert(are_equal( sum_mass2(k1,k2),W2));
