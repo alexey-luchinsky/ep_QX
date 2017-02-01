@@ -98,6 +98,8 @@ int main(void) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
         x=random->rand(0,1);
         if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
+        Q2_scale=2*pT_squared(p);
+        alphas=lhapdf_pdf->alphasQ2((double) Q2_scale);
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
 
         dbl_type wt=ramEP->wt;
