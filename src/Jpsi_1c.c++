@@ -39,6 +39,7 @@ bool kinematics(RamboEP *ramEP,
         assert(are_equal(mass2(p),Mcc*Mcc)); 
         assert(is_zero(mass2(k3)));
         assert(are_equal(sum_mass2(k,k2),x*ecm*ecm));
+        assert(are_equal(sum_mass2(kp,p,k3),x*ecm*ecm));
     return true;
 };
 

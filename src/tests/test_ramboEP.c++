@@ -115,3 +115,36 @@ TEST_CASE("EPflatX") {
     sumEP = sumEP / nEv;
     REQUIRE(sum/sumEP == Approx(1).epsilon(1e-2));
 }
+
+TEST_CASE("Q2cut_flat") {
+    dbl_type ecm = 10;
+    dbl_type x = 0.5, ecm_=sqrt(x)*ecm;
+    dbl_type minQ2 = pow(ecm_, 2) / 3, maxQ2 = 2 * pow(ecm_, 2) / 3;    
+    int nEv = 1e5;
+    dbl_type m1 = random_generator->rand(0, ecm_/ 2), 
+            m2 = random_generator->rand(0, ecm_ / 2);
+    set_v4(P, 0, 0, ecm_ / 2, ecm_ / 2);
+    set_v4(k, 0, 0, -ecm_ / 2, ecm_ / 2);
+
+    // 3D integration
+    Rambo3 ram3(0, m1, m2, random_generator);
+    dbl_type sum = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        dbl_type wt = ram3.next(ecm_, kp, k1, k2);
+        dbl_type t = subtract_mass2(k, kp);
+        dbl_type u = subtract_mass2(P, kp);
+        dbl_type Q2 = -t;
+        if (Q2 < minQ2 || Q2 > maxQ2) continue;
+        sum += wt/nEv;
+    };
+    // eP integration
+    RamboEP ramEP(ecm, random_generator, m1, m2);
+    ramEP.minQ2=minQ2; ramEP.maxQ2=maxQ2;
+    dbl_type sumEP = 0;
+    for (int iEv = 0; iEv < nEv; ++iEv) {
+        if(!ramEP.next(kp, k1, k2, x)) continue;
+        sumEP += ramEP.wt/nEv;
+    };
+    cout<<"Q2cut_flat: sum="<<sum<<" sumEP="<<sumEP<<" sum/sumEP="<<sum/sumEP<<endl;
+    REQUIRE(sum/sumEP == Approx(1).epsilon(1e-2));
+}
