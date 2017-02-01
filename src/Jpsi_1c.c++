@@ -73,7 +73,7 @@ int main(void) {
     TNtuple tup("tup","tup","Q2:Y:pTpsi:matr2:wt");
     Random *random=new Random();
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
-    ramEP->minQ2=0.3; ramEP->maxQ2=0.5;
+    ramEP->minQ2=0.1; ramEP->maxQ2=0.3;
     string dir="Q2_"+std::to_string(ramEP->minQ2)+"_"+std::to_string(ramEP->maxQ2);
     system(("mkdir "+dir).c_str());
     TFile file((dir+"/out.root").c_str(),"RECREATE");
@@ -84,7 +84,7 @@ int main(void) {
     dbl_type sum=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("<<(int)(100.*iEv/nEv)<<" %) -----"<<endl;
-        kinematics(ramEP, k, kp, k1, k2, k3, p);
+        if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
 
         dbl_type wt=ramEP->wt;
         dbl_type matr2=getMatr2(k, kp, k1, k2, k3, p);
