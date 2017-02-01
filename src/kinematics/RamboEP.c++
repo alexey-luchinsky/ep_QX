@@ -29,6 +29,26 @@ RamboEP::~RamboEP() {
     delete ram3;
 }
 
+void RamboEP::set_minQ2(dbl_type _minQ2) {
+    if(_minQ2<0) {
+        cout<<"RamboEP::set_minQ2: _minQ2="<<_minQ2<<"<0, skipping"<<endl;
+        return;
+    };
+    minQ2=_minQ2;
+}
+
+void RamboEP::set_maxQ2(dbl_type _maxQ2) {
+    if(_maxQ2>S) {
+        cout<<"RamboEP::set_maxQ2: _minQ2="<<_maxQ2<<">S="<<S<<", skipping"<<endl;
+        return;
+    };
+    maxQ2=_maxQ2;
+}
+
+void RamboEP::set_minmaxQ2(dbl_type _minQ2, dbl_type _maxQ2) {
+    set_minQ2(_minQ2); set_maxQ2(_maxQ2);
+}
+
 bool RamboEP::next(dbl_type x) {
 //    cout<<"RamboEP::next, start"<<endl;
     set_v4(Pg,P);  mult(Pg,x);
