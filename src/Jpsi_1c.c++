@@ -82,10 +82,14 @@ int main(void) {
 
     // experimental conditions from Kinehl
     ecm=300;
+    dbl_type S=pow(ecm,2);
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
     dbl_type minQ2=2, maxQ2=80;
     ramEP->set_minmaxQ2(minQ2, maxQ2);
     dbl_type minW2=pow(40,2), maxW2=pow(180,2);
+    dbl_type minX=(minQ2+minQ2)/S, maxX=(maxW2+maxQ2)/S;
+    ramEP->set_minmaxY(minX,maxX);
+    dbl_type zMin=0.2;
     
     
     TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:matr2:wt:pdf");
@@ -99,8 +103,12 @@ int main(void) {
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("
                 <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
-        x=random->rand(0,1);
+        x=random->rand(minX,maxX);
         if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
+        ramEP->wt *= maxX-minX;
+        // z cut
+        dbl_type z=sp(p,ramEP->P)/sp(ramEP->q,ramEP->P);
+        if(z<zMin) continue;
         Q2_scale=pow(xi*pT(p),2);
         alphas=lhapdf_pdf->alphasQ2((double) Q2_scale);
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
