@@ -75,7 +75,8 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
 
 
 int main(void) {
-    string pdf_set_name="ct10";
+    string pdf_set_name="cteq6l1"; cout<<" pdfse="<<pdf_set_name<<endl;
+    dbl_type xi=2; cout<<" xi="<<xi<<endl;
     lhapdf_pdf=LHAPDF::mkPDF(pdf_set_name,0);
     Random *random=new Random();
 
@@ -91,7 +92,7 @@ int main(void) {
     TH1F hPT2("hPT2","hPT2",50,0,30); hPT2.Sumw2();
     TFile file("out.root","RECREATE");
 
-    dbl_type Q2_scale=pow(Mcc,2);
+    dbl_type Q2_scale;
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
     int nEv=1e8, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
@@ -100,7 +101,7 @@ int main(void) {
                 <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
         x=random->rand(0,1);
         if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
-        Q2_scale=2*pT_squared(p);
+        Q2_scale=pow(xi*pT(p),2);
         alphas=lhapdf_pdf->alphasQ2((double) Q2_scale);
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
 
@@ -124,7 +125,7 @@ int main(void) {
     tup.Write(); hPT2.Write();
     file.Save();
     write_histogram_to_file(hPT2,"hPT2.hst");
-    cout<<" sigma="<<sigma<<" nb"<<endl;
+    cout<<" sigma="<<sigma<<" pb"<<endl;
     cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
     cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
     cout<<ramEP->nFault<<" faults in ramEP"<<endl;
