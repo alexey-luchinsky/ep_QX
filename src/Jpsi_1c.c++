@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sys/stat.h>
+
 dbl_type Mcc=3.1, mc=Mcc/2, Opsi=0.270;
 dbl_type nanob=0.389e6, picob=1e3*nanob; // conversion to barn
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
@@ -87,21 +88,29 @@ int main(void) {
     dbl_type minQ2=2, maxQ2=80;
     ramEP->set_minmaxQ2(minQ2, maxQ2);
     dbl_type minW2=pow(40,2), maxW2=pow(180,2);
-    dbl_type minX=(minQ2+minQ2)/S, maxX=(maxW2+maxQ2)/S;
+    dbl_type minX=(minQ2+minQ2)/S/2, maxX=(2*maxW2+maxQ2)/S;
+    if(maxX>1) maxX=1;
+    minX=0; maxX=1;
+    cout<<" minX="<<minX<<" maxX="<<maxX<<endl;
     ramEP->set_minmaxY(minX,maxX);
     dbl_type zMin=0.2;
     
     
-    TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:matr2:wt:pdf");
-    TH1F hPT2("hPT2","hPT2",50,0,30); hPT2.Sumw2();
+    int nBins=30;
     TFile file("out.root","RECREATE");
+    TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:matr2:wt:pdf");
+    TH1F hPT2("hPT2","hPT2",nBins,0,30); hPT2.Sumw2();
+    TH1F hQ2("hQ2","hQ2",nBins,minQ2,maxQ2); hQ2.Sumw2();
+    TH1F hZ("hZ","hZ",nBins,0,1); hZ.Sumw2();
+    TH1F hY("hY","hY",nBins,0,1); hY.Sumw2();
+    TH1F hW("hW","hW",nBins,sqrt(minW2),sqrt(maxW2)); hW.Sumw2();
 
     dbl_type Q2_scale;
     dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
     int nEv=1e8, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
-        if( iEv % (nEv/10) == 0) cout<<"---- Event "<<iEv<<" ("
+        if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
                 <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
         x=random->rand(minX,maxX);
         if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
@@ -128,11 +137,20 @@ int main(void) {
 
         tup.Fill(ramEP->Q2,ramEP->Y,pT(p), W2, matr2,wt/nEv, pdf);
         hPT2.Fill(pT_squared(p),dsigma);
+        hQ2.Fill(ramEP->Q2,dsigma);
+        hZ.Fill(z,dsigma);
+        hY.Fill(ramEP->Y,dsigma);
+        hW.Fill(sqrt(ramEP->W2),dsigma);
         ++nPassed;
     };
     tup.Write(); hPT2.Write();
     file.Save();
     write_histogram_to_file(hPT2,"hPT2.hst");
+    write_histogram_to_file(hQ2,"hQ2.hst");
+    write_histogram_to_file(hZ,"hZ.hst");
+    write_histogram_to_file(hY,"hY.hst");
+    write_histogram_to_file(hW,"hW.hst");
+
     cout<<" sigma="<<sigma<<" pb"<<endl;
     cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
     cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
