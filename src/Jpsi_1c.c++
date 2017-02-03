@@ -115,9 +115,16 @@ int main(void) {
         x=random->rand(minX,maxX);
         if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
         ramEP->wt *= maxX-minX;
+
+        // W cut
+        dbl_type W2=sum_mass2(ramEP->P,k1);
+        assert(are_equal(W2,ramEP->Y*S+mass2(k1)));
+        if(W2<minW2||W2>maxW2) continue;
+
+
         // z cut
         dbl_type z=sp(p,ramEP->P)/sp(ramEP->q,ramEP->P);
-        if(z<zMin) continue;
+//        if(z<zMin) continue;
         Q2_scale=pow(xi*pT(p),2);
         alphas=lhapdf_pdf->alphasQ2((double) Q2_scale);
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
@@ -128,8 +135,7 @@ int main(void) {
             nNegative++;
             continue;
         };
-        dbl_type W2=ramEP->W2;
-        if(W2<minW2||W2>maxW2) continue;
+        
 
         sum += matr2*wt*pdf/nEv;
         dsigma = picob*matr2*wt*pdf/(64*pow(ecm,2)*x*ramEP->Y)/nEv;
@@ -140,7 +146,7 @@ int main(void) {
         hQ2.Fill(ramEP->Q2,dsigma);
         hZ.Fill(z,dsigma);
         hY.Fill(ramEP->Y,dsigma);
-        hW.Fill(sqrt(ramEP->W2),dsigma);
+        hW.Fill(sqrt(W2),dsigma);
         ++nPassed;
     };
     tup.Write(); hPT2.Write();
