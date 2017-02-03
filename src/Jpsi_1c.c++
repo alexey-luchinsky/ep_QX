@@ -85,7 +85,7 @@ int main(void) {
     ecm=300;
     dbl_type S=pow(ecm,2);
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
-    dbl_type minQ2=2, maxQ2=80;
+    dbl_type minQ2=4, maxQ2=80;
     ramEP->set_minmaxQ2(minQ2, maxQ2);
     dbl_type minW2=pow(40,2), maxW2=pow(180,2);
     dbl_type minX=(minQ2+minQ2)/S/2, maxX=(2*maxW2+maxQ2)/S;
@@ -93,7 +93,7 @@ int main(void) {
     minX=0; maxX=1;
     cout<<" minX="<<minX<<" maxX="<<maxX<<endl;
     ramEP->set_minmaxY(minX,maxX);
-    dbl_type zMin=0.2;
+    dbl_type zMin=0.2, zMax=0.9;
     
     
     int nBins=30;
@@ -106,31 +106,56 @@ int main(void) {
     TH1F hW("hW","hW",nBins,sqrt(minW2),sqrt(maxW2)); hW.Sumw2();
 
     dbl_type Q2_scale;
-    dbl_type k[4], kp[4], k1[4], k2[4], k3[4], p[4];
+    dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
     int nEv=1e8, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
                 <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
         x=random->rand(minX,maxX);
-        if(!kinematics(ramEP, k, kp, k1, k2, k3, p)) continue;
+
+        if(!ramEP->next(kp,pPsi,k3,x)) continue;
         ramEP->wt *= maxX-minX;
 
-        // W cut
-        dbl_type W2=sum_mass2(ramEP->P,k1);
-        assert(are_equal(W2,ramEP->Y*S+mass2(k1)));
+        set_v4(k,ramEP->kIn);                // k
+            assert(is_zero(mass2(k)));       
+        set_v4(kp, ramEP->kOut);             // kp
+            assert(is_zero(mass2(kp)));
+        set_v4(k2,ramEP->Pg);                // k2
+            assert(are_equal(sum_mass2(pPsi,k3),ramEP->W2));
+        subtract(k,kp,k1);                  // k1=k-kp
+        dbl_type Q2=-mass2(k1);
+            assert(are_equal(Q2,ramEP->Q2)); 
+            assert(are_equal(mass2(pPsi),Mcc*Mcc)); 
+            assert(is_zero(mass2(k3)));
+            assert(are_equal(sum_mass2(k,k2),x*ecm*ecm));
+            assert(are_equal(sum_mass2(kp,pPsi,k3),x*ecm*ecm));
+        set_v4(P,ramEP->P);
+        dbl_type Y=sp(k1,P)/sp(k,P);
+            assert(are_equal(Y,ramEP->Y));
+        dbl_type z=sp(pPsi,P)/sp(k1,P);
+        dbl_type W2=sum_mass2(k1,P);
+            assert(are_equal(W2,Y*S-Q2));
+        dbl_type hat_s, hat_u, hat_t;
+        hat_s=sum_mass2(k1,k2);
+        hat_t=subtract_mass2(k1,pPsi);
+        hat_u=subtract_mass2(k2,pPsi);
+            assert(are_equal(hat_s,x*Y*S-Q2));
+            assert(are_equal(hat_t,-x*Y*(1-z)*S));
+            assert(are_equal(hat_u,Mcc*Mcc-x*Y*z*S));
+            assert(are_equal(hat_s+hat_t+hat_u,Mcc*Mcc-Q2));
+
+
         if(W2<minW2||W2>maxW2) continue;
-
-
-        // z cut
-        dbl_type z=sp(p,ramEP->P)/sp(ramEP->q,ramEP->P);
-//        if(z<zMin) continue;
-        Q2_scale=pow(xi*pT(p),2);
+        if(z<zMin || z>zMax) continue;
+        if(Q2<minQ2||Q2>maxQ2) continue;
+            
+        Q2_scale=pow(xi*pT(pPsi),2);
         alphas=lhapdf_pdf->alphasQ2((double) Q2_scale);
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
 
         dbl_type wt=ramEP->wt;
-        dbl_type matr2=getMatr2(k, kp, k1, k2, k3, p);
+        dbl_type matr2=getMatr2(k, kp, k1, k2, k3, pPsi);
         if(!(matr2>0)) {
             nNegative++;
             continue;
@@ -141,8 +166,8 @@ int main(void) {
         dsigma = picob*matr2*wt*pdf/(64*pow(ecm,2)*x*ramEP->Y)/nEv;
         sigma += dsigma;
 
-        tup.Fill(ramEP->Q2,ramEP->Y,pT(p), W2, matr2,wt/nEv, pdf);
-        hPT2.Fill(pT_squared(p),dsigma);
+        tup.Fill(ramEP->Q2,ramEP->Y,pT(pPsi), W2, matr2,wt/nEv, pdf);
+        hPT2.Fill(pT_squared(pPsi),dsigma);
         hQ2.Fill(ramEP->Q2,dsigma);
         hZ.Fill(z,dsigma);
         hY.Fill(ramEP->Y,dsigma);
