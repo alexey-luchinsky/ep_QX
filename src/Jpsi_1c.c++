@@ -77,7 +77,7 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
 
 int main(void) {
     string pdf_set_name="cteq6l1"; cout<<" pdfse="<<pdf_set_name<<endl;
-    dbl_type xi=2; cout<<" xi="<<xi<<endl;
+    dbl_type xi=1; cout<<" xi="<<xi<<endl;
     lhapdf_pdf=LHAPDF::mkPDF(pdf_set_name,0);
     Random *random=new Random();
 
@@ -151,6 +151,7 @@ int main(void) {
         if(Q2<minQ2||Q2>maxQ2) continue;
             
         Q2_scale=pow(xi*pT(pPsi),2);
+        Q2_scale = xi*xi*(Q2+Mcc*Mcc);
         alphas=lhapdf_pdf->alphasQ2((double) Q2_scale);
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
 
