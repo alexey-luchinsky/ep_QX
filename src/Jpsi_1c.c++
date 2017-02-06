@@ -10,7 +10,7 @@
 dbl_type Mcc=3.1, mc=Mcc/2, Opsi=0.270;
 dbl_type nanob=0.389e6, picob=1e3*nanob; // conversion to barn
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
-dbl_type ecm=100, x;
+dbl_type ecm=600, x;
 
 #include "LHAPDF/LHAPDF.h"
 LHAPDF::PDF *lhapdf_pdf;
@@ -114,36 +114,19 @@ int main(void) {
                 <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
         x=random->rand(minX,maxX);
 
-        if(!ramEP->next(kp,pPsi,k3,x)) continue;
+//        if(!ramEP->next(kp,pPsi,k3,x)) continue;
+        if(!kinematics(ramEP,k,kp,k1,k2,k3,pPsi)) continue;
         ramEP->wt *= maxX-minX;
 
-        set_v4(k,ramEP->kIn);                // k
-            assert(is_zero(mass2(k)));       
-        set_v4(kp, ramEP->kOut);             // kp
-            assert(is_zero(mass2(kp)));
-        set_v4(k2,ramEP->Pg);                // k2
-            assert(are_equal(sum_mass2(pPsi,k3),ramEP->W2));
-        subtract(k,kp,k1);                  // k1=k-kp
         dbl_type Q2=-mass2(k1);
-            assert(are_equal(Q2,ramEP->Q2)); 
-            assert(are_equal(mass2(pPsi),Mcc*Mcc)); 
-            assert(is_zero(mass2(k3)));
-            assert(are_equal(sum_mass2(k,k2),x*ecm*ecm));
-            assert(are_equal(sum_mass2(kp,pPsi,k3),x*ecm*ecm));
         set_v4(P,ramEP->P);
         dbl_type Y=sp(k1,P)/sp(k,P);
-            assert(are_equal(Y,ramEP->Y));
         dbl_type z=sp(pPsi,P)/sp(k1,P);
         dbl_type W2=sum_mass2(k1,P);
-            assert(are_equal(W2,Y*S-Q2));
         dbl_type hat_s, hat_u, hat_t;
         hat_s=sum_mass2(k1,k2);
         hat_t=subtract_mass2(k1,pPsi);
         hat_u=subtract_mass2(k2,pPsi);
-            assert(are_equal(hat_s,x*Y*S-Q2));
-            assert(are_equal(hat_t,-x*Y*(1-z)*S));
-            assert(are_equal(hat_u,Mcc*Mcc-x*Y*z*S));
-            assert(are_equal(hat_s+hat_t+hat_u,Mcc*Mcc-Q2));
 
 
         if(W2<minW2||W2>maxW2) continue;
