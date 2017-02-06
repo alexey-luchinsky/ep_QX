@@ -62,3 +62,7 @@ target_link_libraries(test_Jpsi_1c.exe ${LHAPDF_LIBRARY})
 file(GLOB_RECURSE Kniehl_cs_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++")
 add_executable(Kniehl_cs.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/Kniehl_cs.c++" ${Kniehl_cs_SOURCE_FILES})
 
+file(GLOB_RECURSE pol_Jpsi_1c_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++")
+add_executable(pol_Jpsi_1c.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/pol_Jpsi_1c.c++" ${pol_Jpsi_1c_SOURCE_FILES})
+target_link_libraries(pol_Jpsi_1c.exe ${ROOT_LIBRARIES})
+target_link_libraries(pol_Jpsi_1c.exe ${LHAPDF_LIBRARY})
