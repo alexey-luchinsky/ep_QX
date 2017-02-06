@@ -98,7 +98,7 @@ int main(void) {
     
     int nBins=30;
     TFile file("out.root","RECREATE");
-    TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:matr2:wt:pdf");
+    TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:dsigma");
     TH1F hPT2("hPT2","hPT2",nBins,0,30); hPT2.Sumw2();
     TH1F hQ2("hQ2","hQ2",nBins,minQ2,maxQ2); hQ2.Sumw2();
     TH1F hZ("hZ","hZ",nBins,0,1); hZ.Sumw2();
@@ -161,12 +161,17 @@ int main(void) {
             continue;
         };
         
-
-        sum += matr2*wt*pdf/nEv;
-        dsigma = picob*matr2*wt*pdf/(64*pow(ecm,2)*x*ramEP->Y)/nEv;
+        
+        
+        dsigma=1;
+        dsigma *= matr2*pdf*wt;
+        dsigma *= 1./4/8; // polarizations and initial gluon spin
+        dsigma *= 1./(2*x*pow(ecm,2)); // 4 I
+        dsigma *= 1./nEv;
+        dsigma *= picob;
         sigma += dsigma;
 
-        tup.Fill(ramEP->Q2,ramEP->Y,pT(pPsi), W2, matr2,wt/nEv, pdf);
+        tup.Fill(ramEP->Q2,ramEP->Y,pT(pPsi), W2, dsigma);
         hPT2.Fill(pT_squared(pPsi),dsigma);
         hQ2.Fill(ramEP->Q2,dsigma);
         hZ.Fill(z,dsigma);
