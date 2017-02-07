@@ -83,6 +83,8 @@ int main(void) {
 
     // experimental conditions from Kinehl
     ecm=300;
+    cout<<" ecm="<<ecm<<endl;
+
     dbl_type S=pow(ecm,2);
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
     dbl_type minQ2=4, maxQ2=80;
@@ -107,7 +109,7 @@ int main(void) {
 
     dbl_type Q2_scale;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
-    int nEv=1e8, nPassed=0, nNegative=0;
+    int nEv=1e2, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
@@ -144,6 +146,16 @@ int main(void) {
             nNegative++;
             continue;
         };
+        if(nPassed<10) {
+            println_4v("k",k);
+            println_4v("kp",kp);
+            println_4v("k1",k1);
+            println_4v("k2",k2);
+            println_4v("k3",k3);
+            println_4v("pPsi",pPsi);
+            cout<<" matr2="<<matr2<<endl;
+        };
+
         
         
         

@@ -30,22 +30,8 @@ void write_histogram_to_file(TH1F &histogram, string file_name) {
 }
 
 
+#define spp(k,kp,v1,v2) 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2))
 
-cmplx spp(dbl_type (&k)[4], dbl_type (&kp)[4], cmplx (&v1)[4], cmplx (&v2)[4]) {
-    return 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2));
-}
-
-cmplx spp(dbl_type (&k)[4], dbl_type (&kp)[4], dbl_type (&v1)[4], cmplx (&v2)[4]) {
-    return 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2));
-}
-
-cmplx spp(dbl_type (&k)[4], dbl_type (&kp)[4], cmplx (&v1)[4], dbl_type (&v2)[4]) {
-    return 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2));
-}
-
-cmplx spp(dbl_type (&k)[4], dbl_type (&kp)[4], dbl_type (&v1)[4], dbl_type (&v2)[4]) {
-    return 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2));
-}
 
 bool kinematics(RamboEP *ramEP, 
         dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
@@ -66,8 +52,8 @@ bool kinematics(RamboEP *ramEP,
     return true;
 };
 
-dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4]) {
+dbl_type getMatr2_pol(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
+                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv) {
     const int nAmps=5;
     cmplx Amp[nAmps];
 
@@ -118,6 +104,7 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
                  multTable[4][3]=spp(k,kp,k3,k2);
                  multTable[4][4]=spp(k,kp,k3,k3);
 
+                 
                  for(int iAmp=0; iAmp<nAmps; ++iAmp) {
                      for(int ciAmp=0; ciAmp<nAmps; ++ciAmp) {
                          imatr2 += Amp[iAmp]*conj(Amp[ciAmp])*multTable[iAmp][ciAmp];
@@ -129,8 +116,54 @@ dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(
 //        for(int _i=0; _i<4; ++_i) epsG2[_i]=k2[_i];
      assert(is_zero(imatr2.imag()));
      assert(imatr2.real()>0);
+     if(iEv<10) {
+         cout<<"(*----- Debug print at iEv="<<iEv<<"-------*)"<<endl;
+         println_4v_math("k",k);
+         println_4v_math("kp",kp);
+         println_4v_math("k1",k1);
+         println_4v_math("k2",k2);
+         println_4v_math("k3",k3);
+         println_4v_math("pPsi",pPsi);
+         println_4v_math("epsG2",epsG2);
+         println_4v_math("epsG3",epsG3);
+         println_4v_math("epsPsi",epsPsi);
+         cout<<"MultTable"<<endl;
+         for(int iA=0; iA<nAmps; ++iA) {
+             for(int ciA=0; ciA<nAmps; ++ciA) {
+                cout<<"\t {"<<iA<<","<<ciA<<","<<multTable[iA][ciA]<<"},"<<endl;
+
+             }
+         };
+         cout<<"Amp"<<endl;
+         for(int iA=0; iA<nAmps; ++iA) {
+             cout<<"\t {"<<iA<<","<<Amp[iA]<<"},"<<endl;
+         };
+     }
      return imatr2.real();    
 };
+
+dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
+                dbl_type(&k3)[4], dbl_type(&p)[4]) {
+    return (-524288*Opsi*pow(alpha,2)*pow(alphas,2)*pow(mc,-1)*pow(PI,4)*pow(sp(k1,k1),-2)*pow(sp(k2,p),-2)*pow(2*sp(k2,k3) + sp(k2,p) - sp(k3,p),-2)*pow(sp(k3,p),-2)*
+     (-(pow(sp(k2,p),4)*pow(sp(k3,kp),2)) - pow(sp(k2,kp),2)*pow(sp(k3,p),3)*(4*pow(mc,2) + sp(k3,p)) + 
+       pow(sp(k2,p),2)*sp(k3,p)*((pow(sp(k2,kp),2) - pow(sp(kp,p),2))*sp(k3,p) + 6*sp(k2,kp)*sp(k3,kp)*sp(k3,p) + pow(sp(k3,kp),2)*(-4*pow(mc,2) + sp(k3,p))) - 
+       2*pow(sp(k3,p),2)*sp(k2,kp)*sp(k2,p)*(sp(k2,kp)*(-2*pow(mc,2) + sp(k3,p)) + sp(k3,p)*(sp(k3,kp) - sp(kp,p))) + 
+       2*pow(sp(k2,p),3)*sp(k3,kp)*(sp(k3,kp)*(2*pow(mc,2) - sp(k3,p)) - sp(k3,p)*(sp(k2,kp) + sp(kp,p))) - 
+       4*pow(mc,2)*pow(sp(k2,k3),3)*(-(sp(k3,kp)*sp(kp,p)) + sp(k2,kp)*(2*sp(k3,kp) + sp(kp,p))) + 
+       pow(sp(k2,k3),2)*(pow(sp(k3,kp),2)*(32*pow(mc,4) - pow(sp(k2,p),2) - 4*pow(mc,2)*sp(k2,p)) + 
+          pow(sp(k2,kp),2)*(32*pow(mc,4) - pow(sp(k3,p),2) + 4*pow(mc,2)*sp(k3,p)) + 2*pow(sp(kp,p),2)*(-4*pow(mc,4) + sp(k2,p)*sp(k3,p)) - 
+          2*sp(k3,kp)*(sp(k2,p)*(4*pow(mc,2) - sp(k3,p)) + 2*pow(mc,2)*(4*pow(mc,2) + sp(k3,p)))*sp(kp,p) + 
+          2*sp(k2,kp)*(2*sp(k3,kp)*(8*pow(mc,4) + sp(k2,p)*(pow(mc,2) - sp(k3,p)) - pow(mc,2)*sp(k3,p)) + 
+             (8*pow(mc,4) - 4*pow(mc,2)*sp(k3,p) - sp(k2,p)*(2*pow(mc,2) + sp(k3,p)))*sp(kp,p))) + 
+       2*sp(k2,k3)*(pow(sp(k2,kp),2)*sp(k3,p)*(sp(k2,p)*(-6*pow(mc,2) + sp(k3,p)) + sp(k3,p)*(4*pow(mc,2) + sp(k3,p))) + 
+          sp(k2,kp)*(pow(sp(k2,p),2)*(sp(k3,kp)*(2*pow(mc,2) - 3*sp(k3,p)) - sp(k3,p)*sp(kp,p)) + 
+             2*pow(mc,2)*sp(k3,p)*(sp(k3,kp)*(-4*pow(mc,2) + sp(k3,p)) + sp(k3,p)*sp(kp,p)) + 
+             sp(k2,p)*(sp(k3,kp)*(8*pow(mc,4) + 3*pow(sp(k3,p),2) - 8*pow(mc,2)*sp(k3,p)) - 6*pow(mc,2)*sp(k3,p)*sp(kp,p))) - 
+          sp(k2,p)*(pow(sp(k2,p),2)*pow(sp(k3,kp),2) + sp(k2,p)*(-(pow(sp(kp,p),2)*sp(k3,p)) + pow(sp(k3,kp),2)*(-4*pow(mc,2) + sp(k3,p)) + 
+                2*pow(mc,2)*sp(k3,kp)*sp(kp,p)) + sp(k3,p)*(6*pow(mc,2)*pow(sp(k3,kp),2) + pow(sp(kp,p),2)*(-2*pow(mc,2) + sp(k3,p)) + 
+                sp(k3,kp)*(-6*pow(mc,2) + sp(k3,p))*sp(kp,p))))))/81.;
+}
+
 
 int main(void) {
     string pdf_set_name="cteq6l1"; cout<<" pdfse="<<pdf_set_name<<endl;
@@ -140,6 +173,7 @@ int main(void) {
 
     // experimental conditions from Kinehl
     ecm=300;
+    cout<<" ecm="<<ecm<<endl;
     dbl_type S=pow(ecm,2);
     RamboEP *ramEP=new RamboEP(ecm, random, Mcc,0);
     dbl_type minQ2=4, maxQ2=80;
@@ -164,10 +198,10 @@ int main(void) {
     
     dbl_type Q2_scale;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
-    int nEv=1e8, nPassed=0, nNegative=0;
+    int nEv=1e2, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
-        if( iEv % (nEv/100) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
+        if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
                 <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
         x=random->rand(minX,maxX);
 
@@ -192,8 +226,7 @@ int main(void) {
         alphas=lhapdf_pdf->alphasQ2((double) Q2_scale);
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
 
-        dbl_type matr2=getMatr2(k,kp,k1,k2,k3,pPsi);
-        
+        dbl_type matr2=getMatr2_pol(k,kp,k1,k2,k3,pPsi,nPassed);
         dbl_type wt=ramEP->wt;
         if(!(matr2>0)) {
             nNegative++;
