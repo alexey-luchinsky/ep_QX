@@ -152,12 +152,22 @@ int main(void) {
     ramEP->set_minmaxY(minX,maxX);
     dbl_type zMin=0.2, zMax=0.9; 
 
+    int nBins=30;
+    TFile file("out_pol.root","RECREATE");
+    TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:dsigma");
+    TH1F hPT2("hPT2","hPT2",nBins,0,30); hPT2.Sumw2();
+    TH1F hQ2("hQ2","hQ2",nBins,minQ2,maxQ2); hQ2.Sumw2();
+    TH1F hZ("hZ","hZ",nBins,0,1); hZ.Sumw2();
+    TH1F hY("hY","hY",nBins,0,1); hY.Sumw2();
+    TH1F hW("hW","hW",nBins,sqrt(minW2),sqrt(maxW2)); hW.Sumw2();
+    
+    
     dbl_type Q2_scale;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
-    int nEv=1e4, nPassed=0, nNegative=0;
+    int nEv=1e8, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
-        if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
+        if( iEv % (nEv/100) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
                 <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
         x=random->rand(minX,maxX);
 
@@ -198,7 +208,27 @@ int main(void) {
         dsigma *= picob;
         sigma += dsigma;
 
+        tup.Fill(ramEP->Q2,ramEP->Y,pT(pPsi), W2, dsigma);
+        hPT2.Fill(pT_squared(pPsi),dsigma);
+        hQ2.Fill(ramEP->Q2,dsigma);
+        hZ.Fill(z,dsigma);
+        hY.Fill(ramEP->Y,dsigma);
+        hW.Fill(sqrt(W2),dsigma);
 
         ++nPassed;
     };
+    
+    tup.Write(); hPT2.Write();
+    file.Save();
+    write_histogram_to_file(hPT2,"hPT2_pol.hst");
+    write_histogram_to_file(hQ2,"hQ2_pol.hst");
+    write_histogram_to_file(hZ,"hZ_pol.hst");
+    write_histogram_to_file(hY,"hY_pol.hst");
+    write_histogram_to_file(hW,"hW_pol.hst");
+
+    cout<<" sigma="<<sigma<<" pb"<<endl;
+    cout<<nPassed<<" ("<<(int)(100.*nPassed/nEv)<<"%) events passed"<<endl;
+    cout<<nNegative<<" ("<<(int)(100.*nNegative/nEv)<<"%) events with negative matr2"<<endl;
+    cout<<ramEP->nFault<<" faults in ramEP"<<endl;
+
  }
