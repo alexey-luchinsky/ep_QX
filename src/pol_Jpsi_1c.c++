@@ -33,6 +33,7 @@ const int nAmps=5;
 cmplx Amp[nAmps];
 cmplx multTable[nAmps][nAmps];
 cmplx epsG2[4], epsG3[4], epsPsi[4];
+cmplx cepsG2[4], cepsG3[4], cepsPsi[4];
 
 void calcAmps(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
                 dbl_type(&k3)[4], dbl_type(&p)[4]) {
@@ -45,15 +46,11 @@ void calcAmps(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)
 }
 
 cmplx spp(dbl_type (&k)[4], dbl_type (&kp)[4], cmplx (&v1)[4], cmplx (&v2)[4]) {
-    cmplx cv2[4];
-    for(int i=0; i<3; ++i) cv2[i]=conj(v2[i]);
-    return 4*(sp(k,v1)*sp(kp,cv2)-sp(v1,cv2)*sp(k,kp)+sp(kp,v1)*sp(k,cv2));
+    return 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2));
 }
 
 cmplx spp(dbl_type (&k)[4], dbl_type (&kp)[4], dbl_type (&v1)[4], cmplx (&v2)[4]) {
-    cmplx cv2[4];
-    for(int i=0; i<3; ++i) cv2[i]=conj(v2[i]);
-    return 4*(sp(k,v1)*sp(kp,cv2)-sp(v1,cv2)*sp(k,kp)+sp(kp,v1)*sp(k,cv2));
+    return 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2));
 }
 
 cmplx spp(dbl_type (&k)[4], dbl_type (&kp)[4], cmplx (&v1)[4], dbl_type (&v2)[4]) {
@@ -108,7 +105,7 @@ int main(void) {
 
     dbl_type Q2_scale;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
-    int nEv=10, nPassed=0, nNegative=0;
+    int nEv=1e4, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
@@ -122,53 +119,61 @@ int main(void) {
         dbl_type Y=sp(k1,P)/sp(k,P);
         dbl_type z=sp(pPsi,P)/sp(k1,P);
         dbl_type W2=sum_mass2(k1,P);
+        
+        dbl_type q[4];
+        subtract(k,kp,q);
+        assert(is_zero(spp(k,kp,k1,q)));
 
-        dbl_type matr2=0;
+        cmplx imatr2=COMPLEX_ZERO;
         for(int iPolPsi=0; iPolPsi<3; ++iPolPsi) {
             for(int iPolG2=0; iPolG2<2; ++iPolG2) {
                 for(int iPolG3=0; iPolG3<2; ++iPolG3) {
-                    set_gluon_polarization(iPolG2, k2, epsG2);
+                    set_gluon_polarization(iPolG2, k2, epsG2, cepsG2);
 //                    for(int _i=0; _i<4; ++_i) epsG2[_i]=k2[_i];
-                    set_gluon_polarization(iPolG3, k3, epsG3);
-                    set_psi_polarization(iPolPsi, pPsi, epsPsi);
+                    set_gluon_polarization(iPolG3, k3, epsG3, cepsG3);
+                    set_psi_polarization(iPolPsi, pPsi, epsPsi, cepsPsi);
                     calcAmps(k,kp,k1,k2,k3,pPsi);
-                    multTable[0][0]=spp(k,kp,epsG2,epsG2);
-                    multTable[0][1]=spp(k,kp,epsG2,epsG3);
-                    multTable[0][2]=spp(k,kp,epsG2,epsPsi);
+
+                    multTable[0][0]=spp(k,kp,epsG2,cepsG2);
+                    multTable[0][1]=spp(k,kp,epsG2,cepsG3);
+                    multTable[0][2]=spp(k,kp,epsG2,cepsPsi);
                     multTable[0][3]=spp(k,kp,epsG2,k2);
                     multTable[0][4]=spp(k,kp,epsG2,k3);
-                    multTable[1][0]=spp(k,kp,epsG3,epsG2);
-                    multTable[1][1]=spp(k,kp,epsG3,epsG3);
-                    multTable[1][2]=spp(k,kp,epsG3,epsPsi);
+                    multTable[1][0]=spp(k,kp,epsG3,cepsG2);
+                    multTable[1][1]=spp(k,kp,epsG3,cepsG3);
+                    multTable[1][2]=spp(k,kp,epsG3,cepsPsi);
                     multTable[1][3]=spp(k,kp,epsG3,k2);
                     multTable[1][4]=spp(k,kp,epsG3,k3);
-                    multTable[2][0]=spp(k,kp,epsPsi,epsG2);
-                    multTable[2][1]=spp(k,kp,epsPsi,epsG3);
-                    multTable[2][2]=spp(k,kp,epsPsi,epsPsi);
+                    multTable[2][0]=spp(k,kp,epsPsi,cepsG2);
+                    multTable[2][1]=spp(k,kp,epsPsi,cepsG3);
+                    multTable[2][2]=spp(k,kp,epsPsi,cepsPsi);
                     multTable[2][3]=spp(k,kp,epsPsi,k2);
                     multTable[2][4]=spp(k,kp,epsPsi,k3);
-                    multTable[3][0]=spp(k,kp,k2,epsG2);
-                    multTable[3][1]=spp(k,kp,k2,epsG3);
-                    multTable[3][2]=spp(k,kp,k2,epsPsi);
+                    multTable[3][0]=spp(k,kp,k2,cepsG2);
+                    multTable[3][1]=spp(k,kp,k2,cepsG3);
+                    multTable[3][2]=spp(k,kp,k2,cepsPsi);
                     multTable[3][3]=spp(k,kp,k2,k2);
                     multTable[3][4]=spp(k,kp,k2,k3);
-                    multTable[4][0]=spp(k,kp,k3,epsG2);
-                    multTable[4][1]=spp(k,kp,k3,epsG3);
-                    multTable[4][2]=spp(k,kp,k3,epsPsi);
+                    multTable[4][0]=spp(k,kp,k3,cepsG2);
+                    multTable[4][1]=spp(k,kp,k3,cepsG3);
+                    multTable[4][2]=spp(k,kp,k3,cepsPsi);
                     multTable[4][3]=spp(k,kp,k3,k2);
                     multTable[4][4]=spp(k,kp,k3,k3);
+
                     for(int iAmp=0; iAmp<nAmps; ++iAmp) {
                         for(int ciAmp=0; ciAmp<nAmps; ++ciAmp) {
-                            matr2 += real(Amp[iAmp]*conj(Amp[ciAmp])*multTable[iAmp][ciAmp]);
+                            imatr2 += Amp[iAmp]*conj(Amp[ciAmp])*multTable[iAmp][ciAmp];
                         };
                     };                    
                 }
             }
         }
 //        for(int _i=0; _i<4; ++_i) epsG2[_i]=k2[_i];
-        
+        assert(is_zero(imatr2.imag()));
+        assert(imatr2.real()>0);
+        dbl_type matr2=imatr2.real();
          
-         cout<<" matr2="<<matr2<<endl;
+         if(iEv<10) cout<<" imatr2="<<imatr2<<" matr2="<<matr2<<endl;
 
         if(W2<minW2||W2>maxW2) continue;
         if(z<zMin || z>zMax) continue;
