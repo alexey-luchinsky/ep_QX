@@ -150,9 +150,7 @@ int main(void) {
     minX=0; maxX=1;
     cout<<" minX="<<minX<<" maxX="<<maxX<<endl;
     ramEP->set_minmaxY(minX,maxX);
-    dbl_type zMin=0.2, zMax=0.9;
-    
-    
+    dbl_type zMin=0.2, zMax=0.9; 
 
     dbl_type Q2_scale;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
@@ -171,9 +169,9 @@ int main(void) {
         dbl_type z=sp(pPsi,P)/sp(k1,P);
         dbl_type W2=sum_mass2(k1,P);
         
-        dbl_type q[4];
-        subtract(k,kp,q);
-        assert(is_zero(spp(k,kp,k1,q)));       
+//        dbl_type q[4];
+//        subtract(k,kp,q);
+//        assert(is_zero(spp(k,kp,k1,q)));       
 
         if(W2<minW2||W2>maxW2) continue;
         if(z<zMin || z>zMax) continue;
@@ -190,10 +188,16 @@ int main(void) {
         if(!(matr2>0)) {
             nNegative++;
             continue;
-        };
-        
-        
-        
+        };      
+
+        dsigma=1;
+        dsigma *= matr2*pdf*wt;
+        dsigma *= 1./4/8; // polarizations and initial gluon spin
+        dsigma *= 1./(2*x*pow(ecm,2)); // 4 I
+        dsigma *= 1./nEv;
+        dsigma *= picob;
+        sigma += dsigma;
+
 
         ++nPassed;
     };
