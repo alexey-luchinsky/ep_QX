@@ -155,6 +155,12 @@ void set_gluon_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4]
     }
 }
 
+void set_gluon_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4], cmplx (cans)[4]) {
+    set_gluon_polarization(state, momentum, answ);
+    for(int i=0; i<4; ++i) cans[i]=conj(answ[i]);
+}
+
+
 void apply_boost_to(dbl_type bx, dbl_type by, dbl_type bz, cmplx (&answ)[4]) {
     dbl_type bxx = bx * bx;
     dbl_type byy = by * by;
@@ -237,4 +243,9 @@ void set_psi_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4]) 
         answ[i] = COMPLEX_ZERO;
     answ[state] = COMPLEX_ONE;
     apply_boost_to(momentum, answ);
+}
+
+void set_psi_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4], cmplx (&cans)[4]) {
+    set_psi_polarization(state, momentum, answ);
+    for(int i=0; i<4; ++i) cans[i]=conj(answ[i]);
 }

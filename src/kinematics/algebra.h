@@ -177,7 +177,11 @@ void rotate_euler(dbl_type phi, dbl_type theta, dbl_type ksi, cmplx (&answ)[4]);
 
 void set_gluon_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4]);
 
+void set_gluon_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4], cmplx (cans)[4]);
+
 void set_psi_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4]);
+
+void set_psi_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4], cmplx (&cans)[4]);
 
 
 /************************** UTIL **************************/
