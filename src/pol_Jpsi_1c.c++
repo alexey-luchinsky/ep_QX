@@ -30,7 +30,7 @@ void write_histogram_to_file(TH1F &histogram, string file_name) {
 }
 
 
-#define spp(k,kp,v1,v2) 4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2))
+#define spp(k,kp,v1,v2) 8*4*(sp(k,v1)*sp(kp,v2)-sp(v1,v2)*sp(k,kp)+sp(kp,v1)*sp(k,v2))
 
 
 bool kinematics(RamboEP *ramEP, 
@@ -154,7 +154,7 @@ dbl_type getMatr2_pol(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_t
 //        for(int _i=0; _i<4; ++_i) epsG2[_i]=k2[_i];
      assert(is_zero(imatr2.imag()));
      assert(imatr2.real()>0);
-     if(iEv<100) {
+     if(iEv<2) {
          cout<<"(*----- Debug print at iEv="<<iEv<<"-------*)"<<endl;
          println_4v_math("k",k);
          println_4v_math("kp",kp);
@@ -217,11 +217,11 @@ int main(void) {
     
     dbl_type Q2_scale;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
-    int nEv=1e2, nPassed=0, nNegative=0;
+    int nEv=1e8, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
-//        if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
-//                <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
+        if( iEv % (nEv/100) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
+                <<(int)(100.*iEv/nEv)<<" %) --- sigma="<<sigma*nEv/iEv<<" pb"<<endl;
         x=random->rand(minX,maxX);
 
         if(!kinematics(ramEP,k,kp,k1,k2,k3,pPsi)) continue;
