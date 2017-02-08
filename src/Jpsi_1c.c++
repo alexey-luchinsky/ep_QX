@@ -53,24 +53,39 @@ bool kinematics(RamboEP *ramEP,
 // k, kp, k1, k2, k3, p
 dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
                 dbl_type(&k3)[4], dbl_type(&p)[4]) {
-    return (-524288*Opsi*pow(alpha,2)*pow(alphas,2)*pow(mc,-1)*pow(PI,4)*pow(sp(k1,k1),-2)*pow(sp(k2,p),-2)*pow(2*sp(k2,k3) + sp(k2,p) - sp(k3,p),-2)*pow(sp(k3,p),-2)*
-     (-(pow(sp(k2,p),4)*pow(sp(k3,kp),2)) - pow(sp(k2,kp),2)*pow(sp(k3,p),3)*(4*pow(mc,2) + sp(k3,p)) + 
-       pow(sp(k2,p),2)*sp(k3,p)*((pow(sp(k2,kp),2) - pow(sp(kp,p),2))*sp(k3,p) + 6*sp(k2,kp)*sp(k3,kp)*sp(k3,p) + pow(sp(k3,kp),2)*(-4*pow(mc,2) + sp(k3,p))) - 
-       2*pow(sp(k3,p),2)*sp(k2,kp)*sp(k2,p)*(sp(k2,kp)*(-2*pow(mc,2) + sp(k3,p)) + sp(k3,p)*(sp(k3,kp) - sp(kp,p))) + 
-       2*pow(sp(k2,p),3)*sp(k3,kp)*(sp(k3,kp)*(2*pow(mc,2) - sp(k3,p)) - sp(k3,p)*(sp(k2,kp) + sp(kp,p))) - 
-       4*pow(mc,2)*pow(sp(k2,k3),3)*(-(sp(k3,kp)*sp(kp,p)) + sp(k2,kp)*(2*sp(k3,kp) + sp(kp,p))) + 
-       pow(sp(k2,k3),2)*(pow(sp(k3,kp),2)*(32*pow(mc,4) - pow(sp(k2,p),2) - 4*pow(mc,2)*sp(k2,p)) + 
-          pow(sp(k2,kp),2)*(32*pow(mc,4) - pow(sp(k3,p),2) + 4*pow(mc,2)*sp(k3,p)) + 2*pow(sp(kp,p),2)*(-4*pow(mc,4) + sp(k2,p)*sp(k3,p)) - 
-          2*sp(k3,kp)*(sp(k2,p)*(4*pow(mc,2) - sp(k3,p)) + 2*pow(mc,2)*(4*pow(mc,2) + sp(k3,p)))*sp(kp,p) + 
-          2*sp(k2,kp)*(2*sp(k3,kp)*(8*pow(mc,4) + sp(k2,p)*(pow(mc,2) - sp(k3,p)) - pow(mc,2)*sp(k3,p)) + 
-             (8*pow(mc,4) - 4*pow(mc,2)*sp(k3,p) - sp(k2,p)*(2*pow(mc,2) + sp(k3,p)))*sp(kp,p))) + 
-       2*sp(k2,k3)*(pow(sp(k2,kp),2)*sp(k3,p)*(sp(k2,p)*(-6*pow(mc,2) + sp(k3,p)) + sp(k3,p)*(4*pow(mc,2) + sp(k3,p))) + 
-          sp(k2,kp)*(pow(sp(k2,p),2)*(sp(k3,kp)*(2*pow(mc,2) - 3*sp(k3,p)) - sp(k3,p)*sp(kp,p)) + 
-             2*pow(mc,2)*sp(k3,p)*(sp(k3,kp)*(-4*pow(mc,2) + sp(k3,p)) + sp(k3,p)*sp(kp,p)) + 
-             sp(k2,p)*(sp(k3,kp)*(8*pow(mc,4) + 3*pow(sp(k3,p),2) - 8*pow(mc,2)*sp(k3,p)) - 6*pow(mc,2)*sp(k3,p)*sp(kp,p))) - 
-          sp(k2,p)*(pow(sp(k2,p),2)*pow(sp(k3,kp),2) + sp(k2,p)*(-(pow(sp(kp,p),2)*sp(k3,p)) + pow(sp(k3,kp),2)*(-4*pow(mc,2) + sp(k3,p)) + 
-                2*pow(mc,2)*sp(k3,kp)*sp(kp,p)) + sp(k3,p)*(6*pow(mc,2)*pow(sp(k3,kp),2) + pow(sp(kp,p),2)*(-2*pow(mc,2) + sp(k3,p)) + 
-                sp(k3,kp)*(-6*pow(mc,2) + sp(k3,p))*sp(kp,p))))))/81.;
+    return (524288*Opsi*pow(alpha,2)*pow(alphas,2)*pow(mc,-1)*pow(PI,4)*pow(sp(k1,k1),-2)*pow(sp(k2,p),-2)*pow(2*sp(k2,k3) + sp(k2,p) - sp(k3,p),-2)*pow(sp(k3,p),-2)*
+     (-16*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp) + 4*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,k3)*sp(k2,kp) - 3*pow(sp(k2,p),2)*pow(sp(k3,p),2)*sp(k,k3)*sp(k2,kp) - 
+       8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp) + 2*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,p)*sp(k2,kp) - 2*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp) - 
+       2*pow(mc,2)*pow(sp(k3,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp) - 2*pow(mc,2)*pow(sp(k3,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,kp) - 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp)*sp(k2,p) + pow(sp(k3,p),3)*sp(k,k3)*sp(k2,kp)*sp(k2,p) + 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp)*sp(k2,p) - pow(sp(k3,p),3)*sp(k,p)*sp(k2,kp)*sp(k2,p) - 8*pow(mc,4)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k2,p) - 
+       3*pow(sp(k3,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k2,p) - 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k3,kp) - 4*pow(mc,2)*pow(sp(k2,p),3)*sp(k,k3)*sp(k3,kp) - 
+       pow(sp(k2,p),2)*pow(sp(k3,p),2)*sp(k,k3)*sp(k3,kp) + 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,p)*sp(k3,kp) - 2*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,p)*sp(k3,kp) - 
+       8*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k3,kp) + 2*pow(mc,2)*pow(sp(k2,p),2)*sp(k,p)*sp(k2,k3)*sp(k3,kp) + 
+       4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,p)*sp(k3,kp) + 4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,p)*sp(k3,kp) + 
+       pow(sp(k3,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(k3,kp) + 2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp)*sp(k3,p) + pow(sp(k2,p),3)*sp(k,k3)*sp(k2,kp)*sp(k3,p) + 
+       4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp)*sp(k3,p) + 8*pow(mc,4)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k3,p) + 
+       3*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k3,p) + pow(sp(k2,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,kp)*sp(k3,p) + 
+       2*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + 
+       8*pow(mc,2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + 6*pow(mc,2)*sp(k,p)*sp(k2,k3)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + 
+       4*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k3,kp)*sp(k3,p) + 2*pow(sp(k2,p),3)*sp(k,k3)*sp(k3,kp)*sp(k3,p) + 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k3,kp)*sp(k3,p) + pow(sp(k2,p),3)*sp(k,p)*sp(k3,kp)*sp(k3,p) + 2*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k3,kp)*sp(k3,p) - 
+       pow(sp(k2,k3),2)*sp(k,p)*sp(k2,p)*sp(k3,kp)*sp(k3,p) - 6*pow(mc,2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(k3,kp)*sp(k3,p) + 
+       sp(k,kp)*(16*pow(mc,6)*pow(sp(k2,k3),2) + pow(sp(k2,p),2)*pow(sp(k3,p),2)*(2*pow(mc,2) - sp(k2,p) + sp(k3,p)) - 
+          sp(k2,k3)*sp(k2,p)*sp(k3,p)*(8*pow(mc,4) + sp(k2,p)*sp(k3,p))) + 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,k3)*sp(kp,p) - 
+       2*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,k3)*sp(kp,p) + 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,p)*sp(kp,p) + pow(sp(k2,p),2)*pow(sp(k3,p),2)*sp(k,p)*sp(kp,p) + 
+       2*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(kp,p) + 4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,p)*sp(kp,p) + 
+       pow(sp(k3,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,p)*sp(kp,p) + 2*pow(sp(k3,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(kp,p) + 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k3,p)*sp(kp,p) + pow(sp(k2,p),3)*sp(k,k3)*sp(k3,p)*sp(kp,p) - 2*pow(sp(k2,p),2)*sp(k,p)*sp(k2,k3)*sp(k3,p)*sp(kp,p) - 
+       pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,p)*sp(k3,p)*sp(kp,p) - 2*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,p)*sp(k3,p)*sp(kp,p) - 
+       6*pow(mc,2)*sp(k,k3)*sp(k2,k3)*sp(k2,p)*sp(k3,p)*sp(kp,p) - 4*pow(mc,2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(k3,p)*sp(kp,p) + 
+       sp(k,k2)*(sp(k3,p)*(4*pow(mc,2)*pow(sp(k3,p),2)*sp(k2,kp) + pow(sp(k2,p),3)*sp(k3,kp) - pow(sp(k2,p),2)*(sp(k2,kp) + 3*sp(k3,kp))*sp(k3,p) + 
+             sp(k2,p)*sp(k3,p)*(sp(k2,kp)*(-4*pow(mc,2) + 2*sp(k3,p)) + sp(k3,p)*(sp(k3,kp) - sp(kp,p)))) + 2*pow(mc,2)*pow(sp(k2,k3),3)*(2*sp(k3,kp) + sp(kp,p)) + 
+          pow(sp(k2,k3),2)*(-4*pow(mc,2)*sp(k2,kp)*(2*pow(mc,2) + sp(k3,p)) - 2*sp(k3,kp)*(8*pow(mc,4) + sp(k2,p)*(pow(mc,2) - sp(k3,p)) - pow(mc,2)*sp(k3,p)) + 
+             (-8*pow(mc,4) + 4*pow(mc,2)*sp(k3,p) + sp(k2,p)*(2*pow(mc,2) + sp(k3,p)))*sp(kp,p)) + 
+          sp(k2,k3)*(pow(sp(k2,p),2)*(sp(k3,kp)*(-2*pow(mc,2) + 3*sp(k3,p)) + sp(k3,p)*sp(kp,p)) + 
+             2*pow(mc,2)*sp(k3,p)*(sp(k3,kp)*(4*pow(mc,2) - sp(k3,p)) - sp(k3,p)*(4*sp(k2,kp) + sp(kp,p))) + 
+             sp(k2,p)*(sp(k3,kp)*(-8*pow(mc,4) - 3*pow(sp(k3,p),2) + 8*pow(mc,2)*sp(k3,p)) - 2*sp(k3,p)*(sp(k2,kp)*sp(k3,p) - 3*pow(mc,2)*sp(kp,p)))))))/81.;
 }
 
 
@@ -109,7 +124,7 @@ int main(void) {
 
     dbl_type Q2_scale;
     dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
-    int nEv=1e2, nPassed=0, nNegative=0;
+    int nEv=1e8, nPassed=0, nNegative=0;
     dbl_type sum=0, dsigma, sigma=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/10) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
