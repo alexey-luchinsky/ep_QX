@@ -54,24 +54,39 @@ bool kinematics(RamboEP *ramEP,
 
 dbl_type getMatr2(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
                 dbl_type(&k3)[4], dbl_type(&p)[4]) {
-    return (-524288*Opsi*pow(alpha,2)*pow(alphas,2)*pow(mc,-1)*pow(PI,4)*pow(sp(k1,k1),-2)*pow(sp(k2,p),-2)*pow(2*sp(k2,k3) + sp(k2,p) - sp(k3,p),-2)*pow(sp(k3,p),-2)*
-     (-(pow(sp(k2,p),4)*pow(sp(k3,kp),2)) - pow(sp(k2,kp),2)*pow(sp(k3,p),3)*(4*pow(mc,2) + sp(k3,p)) + 
-       pow(sp(k2,p),2)*sp(k3,p)*((pow(sp(k2,kp),2) - pow(sp(kp,p),2))*sp(k3,p) + 6*sp(k2,kp)*sp(k3,kp)*sp(k3,p) + pow(sp(k3,kp),2)*(-4*pow(mc,2) + sp(k3,p))) - 
-       2*pow(sp(k3,p),2)*sp(k2,kp)*sp(k2,p)*(sp(k2,kp)*(-2*pow(mc,2) + sp(k3,p)) + sp(k3,p)*(sp(k3,kp) - sp(kp,p))) + 
-       2*pow(sp(k2,p),3)*sp(k3,kp)*(sp(k3,kp)*(2*pow(mc,2) - sp(k3,p)) - sp(k3,p)*(sp(k2,kp) + sp(kp,p))) - 
-       4*pow(mc,2)*pow(sp(k2,k3),3)*(-(sp(k3,kp)*sp(kp,p)) + sp(k2,kp)*(2*sp(k3,kp) + sp(kp,p))) + 
-       pow(sp(k2,k3),2)*(pow(sp(k3,kp),2)*(32*pow(mc,4) - pow(sp(k2,p),2) - 4*pow(mc,2)*sp(k2,p)) + 
-          pow(sp(k2,kp),2)*(32*pow(mc,4) - pow(sp(k3,p),2) + 4*pow(mc,2)*sp(k3,p)) + 2*pow(sp(kp,p),2)*(-4*pow(mc,4) + sp(k2,p)*sp(k3,p)) - 
-          2*sp(k3,kp)*(sp(k2,p)*(4*pow(mc,2) - sp(k3,p)) + 2*pow(mc,2)*(4*pow(mc,2) + sp(k3,p)))*sp(kp,p) + 
-          2*sp(k2,kp)*(2*sp(k3,kp)*(8*pow(mc,4) + sp(k2,p)*(pow(mc,2) - sp(k3,p)) - pow(mc,2)*sp(k3,p)) + 
-             (8*pow(mc,4) - 4*pow(mc,2)*sp(k3,p) - sp(k2,p)*(2*pow(mc,2) + sp(k3,p)))*sp(kp,p))) + 
-       2*sp(k2,k3)*(pow(sp(k2,kp),2)*sp(k3,p)*(sp(k2,p)*(-6*pow(mc,2) + sp(k3,p)) + sp(k3,p)*(4*pow(mc,2) + sp(k3,p))) + 
-          sp(k2,kp)*(pow(sp(k2,p),2)*(sp(k3,kp)*(2*pow(mc,2) - 3*sp(k3,p)) - sp(k3,p)*sp(kp,p)) + 
-             2*pow(mc,2)*sp(k3,p)*(sp(k3,kp)*(-4*pow(mc,2) + sp(k3,p)) + sp(k3,p)*sp(kp,p)) + 
-             sp(k2,p)*(sp(k3,kp)*(8*pow(mc,4) + 3*pow(sp(k3,p),2) - 8*pow(mc,2)*sp(k3,p)) - 6*pow(mc,2)*sp(k3,p)*sp(kp,p))) - 
-          sp(k2,p)*(pow(sp(k2,p),2)*pow(sp(k3,kp),2) + sp(k2,p)*(-(pow(sp(kp,p),2)*sp(k3,p)) + pow(sp(k3,kp),2)*(-4*pow(mc,2) + sp(k3,p)) + 
-                2*pow(mc,2)*sp(k3,kp)*sp(kp,p)) + sp(k3,p)*(6*pow(mc,2)*pow(sp(k3,kp),2) + pow(sp(kp,p),2)*(-2*pow(mc,2) + sp(k3,p)) + 
-                sp(k3,kp)*(-6*pow(mc,2) + sp(k3,p))*sp(kp,p))))))/81.;
+    return (524288*Opsi*pow(alpha,2)*pow(alphas,2)*pow(mc,-1)*pow(PI,4)*pow(sp(k1,k1),-2)*pow(sp(k2,p),-2)*pow(2*sp(k2,k3) + sp(k2,p) - sp(k3,p),-2)*pow(sp(k3,p),-2)*
+     (-16*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp) + 4*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,k3)*sp(k2,kp) - 3*pow(sp(k2,p),2)*pow(sp(k3,p),2)*sp(k,k3)*sp(k2,kp) - 
+       8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp) + 2*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,p)*sp(k2,kp) - 2*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp) - 
+       2*pow(mc,2)*pow(sp(k3,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp) - 2*pow(mc,2)*pow(sp(k3,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,kp) - 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp)*sp(k2,p) + pow(sp(k3,p),3)*sp(k,k3)*sp(k2,kp)*sp(k2,p) + 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp)*sp(k2,p) - pow(sp(k3,p),3)*sp(k,p)*sp(k2,kp)*sp(k2,p) - 8*pow(mc,4)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k2,p) - 
+       3*pow(sp(k3,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k2,p) - 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k3,kp) - 4*pow(mc,2)*pow(sp(k2,p),3)*sp(k,k3)*sp(k3,kp) - 
+       pow(sp(k2,p),2)*pow(sp(k3,p),2)*sp(k,k3)*sp(k3,kp) + 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,p)*sp(k3,kp) - 2*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,p)*sp(k3,kp) - 
+       8*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k3,kp) + 2*pow(mc,2)*pow(sp(k2,p),2)*sp(k,p)*sp(k2,k3)*sp(k3,kp) + 
+       4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,p)*sp(k3,kp) + 4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,p)*sp(k3,kp) + 
+       pow(sp(k3,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(k3,kp) + 2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp)*sp(k3,p) + pow(sp(k2,p),3)*sp(k,k3)*sp(k2,kp)*sp(k3,p) + 
+       4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp)*sp(k3,p) + 8*pow(mc,4)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k3,p) + 
+       3*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k3,p) + pow(sp(k2,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,kp)*sp(k3,p) + 
+       2*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + pow(sp(k2,k3),2)*sp(k,p)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + 
+       8*pow(mc,2)*sp(k,k3)*sp(k2,k3)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + 6*pow(mc,2)*sp(k,p)*sp(k2,k3)*sp(k2,kp)*sp(k2,p)*sp(k3,p) + 
+       4*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k3,kp)*sp(k3,p) + 2*pow(sp(k2,p),3)*sp(k,k3)*sp(k3,kp)*sp(k3,p) + 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,p)*sp(k3,kp)*sp(k3,p) + pow(sp(k2,p),3)*sp(k,p)*sp(k3,kp)*sp(k3,p) + 2*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(k3,kp)*sp(k3,p) - 
+       pow(sp(k2,k3),2)*sp(k,p)*sp(k2,p)*sp(k3,kp)*sp(k3,p) - 6*pow(mc,2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(k3,kp)*sp(k3,p) + 
+       sp(k,kp)*(16*pow(mc,6)*pow(sp(k2,k3),2) + pow(sp(k2,p),2)*pow(sp(k3,p),2)*(2*pow(mc,2) - sp(k2,p) + sp(k3,p)) - 
+          sp(k2,k3)*sp(k2,p)*sp(k3,p)*(8*pow(mc,4) + sp(k2,p)*sp(k3,p))) + 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,k3)*sp(kp,p) - 
+       2*pow(mc,2)*pow(sp(k2,k3),3)*sp(k,k3)*sp(kp,p) + 8*pow(mc,4)*pow(sp(k2,k3),2)*sp(k,p)*sp(kp,p) + pow(sp(k2,p),2)*pow(sp(k3,p),2)*sp(k,p)*sp(kp,p) + 
+       2*pow(mc,2)*pow(sp(k2,p),2)*sp(k,k3)*sp(k2,k3)*sp(kp,p) + 4*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,p)*sp(kp,p) + 
+       pow(sp(k3,p),2)*sp(k,k3)*sp(k2,k3)*sp(k2,p)*sp(kp,p) + 2*pow(sp(k3,p),2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(kp,p) + 
+       2*pow(mc,2)*pow(sp(k2,k3),2)*sp(k,k3)*sp(k3,p)*sp(kp,p) + pow(sp(k2,p),3)*sp(k,k3)*sp(k3,p)*sp(kp,p) - 2*pow(sp(k2,p),2)*sp(k,p)*sp(k2,k3)*sp(k3,p)*sp(kp,p) - 
+       pow(sp(k2,k3),2)*sp(k,k3)*sp(k2,p)*sp(k3,p)*sp(kp,p) - 2*pow(sp(k2,k3),2)*sp(k,p)*sp(k2,p)*sp(k3,p)*sp(kp,p) - 
+       6*pow(mc,2)*sp(k,k3)*sp(k2,k3)*sp(k2,p)*sp(k3,p)*sp(kp,p) - 4*pow(mc,2)*sp(k,p)*sp(k2,k3)*sp(k2,p)*sp(k3,p)*sp(kp,p) + 
+       sp(k,k2)*(sp(k3,p)*(4*pow(mc,2)*pow(sp(k3,p),2)*sp(k2,kp) + pow(sp(k2,p),3)*sp(k3,kp) - pow(sp(k2,p),2)*(sp(k2,kp) + 3*sp(k3,kp))*sp(k3,p) + 
+             sp(k2,p)*sp(k3,p)*(sp(k2,kp)*(-4*pow(mc,2) + 2*sp(k3,p)) + sp(k3,p)*(sp(k3,kp) - sp(kp,p)))) + 2*pow(mc,2)*pow(sp(k2,k3),3)*(2*sp(k3,kp) + sp(kp,p)) + 
+          pow(sp(k2,k3),2)*(-4*pow(mc,2)*sp(k2,kp)*(2*pow(mc,2) + sp(k3,p)) - 2*sp(k3,kp)*(8*pow(mc,4) + sp(k2,p)*(pow(mc,2) - sp(k3,p)) - pow(mc,2)*sp(k3,p)) + 
+             (-8*pow(mc,4) + 4*pow(mc,2)*sp(k3,p) + sp(k2,p)*(2*pow(mc,2) + sp(k3,p)))*sp(kp,p)) + 
+          sp(k2,k3)*(pow(sp(k2,p),2)*(sp(k3,kp)*(-2*pow(mc,2) + 3*sp(k3,p)) + sp(k3,p)*sp(kp,p)) + 
+             2*pow(mc,2)*sp(k3,p)*(sp(k3,kp)*(4*pow(mc,2) - sp(k3,p)) - sp(k3,p)*(4*sp(k2,kp) + sp(kp,p))) + 
+             sp(k2,p)*(sp(k3,kp)*(-8*pow(mc,4) - 3*pow(sp(k3,p),2) + 8*pow(mc,2)*sp(k3,p)) - 2*sp(k3,p)*(sp(k2,kp)*sp(k3,p) - 3*pow(mc,2)*sp(kp,p)))))))/81.;
 }
 
 
@@ -94,38 +109,38 @@ dbl_type getMatr2_pol(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_t
                  set_psi_polarization(iPolPsi, pPsi, epsPsi, cepsPsi);
                  
                 dbl_type Q2=-mass2(k1);
-                Amp[0]=(-64*alpha*alphas*mc*pow(PI,2)*(-4*pow(sp(k2,k3),2)*sp(epsG3,epsPsi) + 4*sp(epsG3,k2)*sp(epsPsi,k3)*sp(k2,k3) + 2*sp(epsG3,k2)*sp(epsPsi,pPsi)*sp(k2,k3) + sp(epsG3,k3)*(-4*sp(epsPsi,k2)*sp(k2,k3) + sp(epsPsi,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi))) + sp(epsG3,pPsi)*(-4*sp(epsPsi,k2)*sp(k2,k3) + sp(epsPsi,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi))) + 4*sp(epsG3,k2)*sp(epsPsi,k2)*sp(k3,pPsi) - 4*sp(epsG3,k2)*sp(epsPsi,k3)*sp(k3,pPsi) - 3*sp(epsG3,k2)*sp(epsPsi,pPsi)*sp(k3,pPsi) + 4*sp(epsG3,epsPsi)*sp(k2,k3)*sp(k3,pPsi))*sqrt(2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
-                Amp[1]=(64*alpha*alphas*mc*pow(PI,2)*(4*pow(sp(k2,k3),2)*sp(epsG2,epsPsi) - 4*sp(epsG2,pPsi)*sp(epsPsi,k3)*sp(k2,k3) - 2*sp(epsG2,pPsi)*sp(epsPsi,pPsi)*sp(k2,k3) + 4*sp(epsG2,epsPsi)*sp(k2,k3)*sp(k2,pPsi) + sp(epsG2,k3)*(4*sp(epsPsi,k3)*sp(k2,pPsi) - 4*sp(epsPsi,k2)*(sp(k2,k3) + sp(k2,pPsi)) + sp(epsPsi,pPsi)*(2*sp(k2,k3) + 3*sp(k2,pPsi))) + sp(epsG2,k2)*(4*sp(epsPsi,k3)*sp(k2,k3) + sp(epsPsi,pPsi)*(2*sp(k2,k3) - sp(k3,pPsi))) + sp(epsG2,pPsi)*sp(epsPsi,pPsi)*sp(k3,pPsi))*sqrt(2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
-                Amp[2]=(-256*alpha*alphas*mc*pow(PI,2)*(pow(sp(k2,k3),2)*sp(epsG2,epsG3) - sp(epsG2,pPsi)*sp(epsG3,k3)*sp(k2,k3) - sp(epsG2,pPsi)*sp(epsG3,pPsi)*sp(k2,k3) + sp(epsG2,epsG3)*sp(k2,k3)*sp(k2,pPsi) + sp(epsG2,k3)*((sp(epsG3,k3) + sp(epsG3,pPsi))*sp(k2,pPsi) - sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))) + sp(epsG2,pPsi)*sp(epsG3,k2)*sp(k3,pPsi) - sp(epsG2,epsG3)*sp(k2,k3)*sp(k3,pPsi) - sp(epsG2,epsG3)*sp(k2,pPsi)*sp(k3,pPsi) + sp(epsG2,k2)*(sp(epsG3,k3)*sp(k2,k3) + sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi)))*sqrt(2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
-                Amp[3]=(-64*alpha*alphas*mc*pow(PI,2)*(4*sp(epsG2,k3)*sp(epsG3,epsPsi)*(sp(k2,k3) - sp(k3,pPsi)) + 4*sp(epsG2,epsPsi)*(sp(epsG3,k3)*sp(k2,k3) + sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi)) + sp(epsG2,epsG3)*(-4*sp(epsPsi,k3)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsPsi,pPsi)*(-2*sp(k2,k3) + sp(k3,pPsi))))*sqrt(2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
-                Amp[4]=(-64*alpha*alphas*mc*pow(PI,2)*(4*sp(epsG2,k2)*sp(epsG3,epsPsi)*sp(k2,k3) - 4*sp(epsG2,pPsi)*sp(epsG3,epsPsi)*sp(k2,k3) + 4*sp(epsG2,epsPsi)*sp(epsG3,k2)*sp(k2,k3) - 4*sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,k3) + 2*sp(epsG2,epsG3)*sp(epsPsi,pPsi)*sp(k2,k3) + 4*sp(epsG2,k3)*sp(epsG3,epsPsi)*sp(k2,pPsi) + 4*sp(epsG2,epsPsi)*sp(epsG3,k2)*sp(k2,pPsi) - 4*sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,pPsi) + sp(epsG2,epsG3)*sp(epsPsi,pPsi)*sp(k2,pPsi))*sqrt(2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+                Amp[0]=(-128*alpha*alphas*mc*pow(PI,2)*(pow(sp(k2,k3),2)*sp(epsG2,epsG3) - sp(epsG2,pPsi)*sp(epsG3,k3)*sp(k2,k3) - sp(epsG2,pPsi)*sp(epsG3,pPsi)*sp(k2,k3) + sp(epsG2,epsG3)*sp(k2,k3)*sp(k2,pPsi) + sp(epsG2,k3)*((sp(epsG3,k3) + sp(epsG3,pPsi))*sp(k2,pPsi) - sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))) + sp(epsG2,pPsi)*sp(epsG3,k2)*sp(k3,pPsi) - sp(epsG2,epsG3)*sp(k2,k3)*sp(k3,pPsi) - sp(epsG2,epsG3)*sp(k2,pPsi)*sp(k3,pPsi) + sp(epsG2,k2)*(sp(epsG3,k3)*sp(k2,k3) + sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi)))*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+                Amp[1]=(-32*alpha*alphas*mc*pow(PI,2)*(4*sp(epsG2,k3)*sp(epsG3,epsPsi)*(sp(k2,k3) - sp(k3,pPsi)) + 4*sp(epsG2,epsPsi)*(sp(epsG3,k3)*sp(k2,k3) + sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi)) + sp(epsG2,epsG3)*(-4*sp(epsPsi,k3)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsPsi,pPsi)*(-2*sp(k2,k3) + sp(k3,pPsi))))*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+                Amp[2]=(-32*alpha*alphas*mc*pow(PI,2)*(-4*pow(sp(k2,k3),2)*sp(epsG3,epsPsi) + 4*sp(epsG3,k2)*sp(epsPsi,k3)*sp(k2,k3) + 2*sp(epsG3,k2)*sp(epsPsi,pPsi)*sp(k2,k3) + sp(epsG3,k3)*(-4*sp(epsPsi,k2)*sp(k2,k3) + sp(epsPsi,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi))) + sp(epsG3,pPsi)*(-4*sp(epsPsi,k2)*sp(k2,k3) + sp(epsPsi,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi))) + 4*sp(epsG3,k2)*sp(epsPsi,k2)*sp(k3,pPsi) - 4*sp(epsG3,k2)*sp(epsPsi,k3)*sp(k3,pPsi) - 3*sp(epsG3,k2)*sp(epsPsi,pPsi)*sp(k3,pPsi) + 4*sp(epsG3,epsPsi)*sp(k2,k3)*sp(k3,pPsi))*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+                Amp[3]=(32*alpha*alphas*mc*pow(PI,2)*(4*pow(sp(k2,k3),2)*sp(epsG2,epsPsi) - 4*sp(epsG2,pPsi)*sp(epsPsi,k3)*sp(k2,k3) - 2*sp(epsG2,pPsi)*sp(epsPsi,pPsi)*sp(k2,k3) + 4*sp(epsG2,epsPsi)*sp(k2,k3)*sp(k2,pPsi) + sp(epsG2,k3)*(4*sp(epsPsi,k3)*sp(k2,pPsi) - 4*sp(epsPsi,k2)*(sp(k2,k3) + sp(k2,pPsi)) + sp(epsPsi,pPsi)*(2*sp(k2,k3) + 3*sp(k2,pPsi))) + sp(epsG2,k2)*(4*sp(epsPsi,k3)*sp(k2,k3) + sp(epsPsi,pPsi)*(2*sp(k2,k3) - sp(k3,pPsi))) + sp(epsG2,pPsi)*sp(epsPsi,pPsi)*sp(k3,pPsi))*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+                Amp[4]=(-32*alpha*alphas*mc*pow(PI,2)*(4*sp(epsG2,k2)*sp(epsG3,epsPsi)*sp(k2,k3) - 4*sp(epsG2,pPsi)*sp(epsG3,epsPsi)*sp(k2,k3) + 4*sp(epsG2,epsPsi)*sp(epsG3,k2)*sp(k2,k3) - 4*sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,k3) + 2*sp(epsG2,epsG3)*sp(epsPsi,pPsi)*sp(k2,k3) + 4*sp(epsG2,k3)*sp(epsG3,epsPsi)*sp(k2,pPsi) + 4*sp(epsG2,epsPsi)*sp(epsG3,k2)*sp(k2,pPsi) - 4*sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,pPsi) + sp(epsG2,epsG3)*sp(epsPsi,pPsi)*sp(k2,pPsi))*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
                  
 
-                 multTable[0][0]=spp(k,kp,epsG2,cepsG2);
-                 multTable[0][1]=spp(k,kp,epsG2,cepsG3);
-                 multTable[0][2]=spp(k,kp,epsG2,cepsPsi);
-                 multTable[0][3]=spp(k,kp,epsG2,k2);
-                 multTable[0][4]=spp(k,kp,epsG2,k3);
-                 multTable[1][0]=spp(k,kp,epsG3,cepsG2);
-                 multTable[1][1]=spp(k,kp,epsG3,cepsG3);
-                 multTable[1][2]=spp(k,kp,epsG3,cepsPsi);
-                 multTable[1][3]=spp(k,kp,epsG3,k2);
-                 multTable[1][4]=spp(k,kp,epsG3,k3);
-                 multTable[2][0]=spp(k,kp,epsPsi,cepsG2);
-                 multTable[2][1]=spp(k,kp,epsPsi,cepsG3);
-                 multTable[2][2]=spp(k,kp,epsPsi,cepsPsi);
-                 multTable[2][3]=spp(k,kp,epsPsi,k2);
-                 multTable[2][4]=spp(k,kp,epsPsi,k3);
-                 multTable[3][0]=spp(k,kp,k2,cepsG2);
-                 multTable[3][1]=spp(k,kp,k2,cepsG3);
-                 multTable[3][2]=spp(k,kp,k2,cepsPsi);
-                 multTable[3][3]=spp(k,kp,k2,k2);
-                 multTable[3][4]=spp(k,kp,k2,k3);
-                 multTable[4][0]=spp(k,kp,k3,cepsG2);
-                 multTable[4][1]=spp(k,kp,k3,cepsG3);
-                 multTable[4][2]=spp(k,kp,k3,cepsPsi);
-                 multTable[4][3]=spp(k,kp,k3,k2);
-                 multTable[4][4]=spp(k,kp,k3,k3);
+                multTable[0][0]=spp(k,kp,epsPsi,cepsPsi);
+                multTable[0][1]=spp(k,kp,epsPsi,k2);
+                multTable[0][2]=spp(k,kp,epsPsi,cepsG2);
+                multTable[0][3]=spp(k,kp,epsPsi,cepsG3);
+                multTable[0][4]=spp(k,kp,epsPsi,k3);
+                multTable[1][0]=spp(k,kp,k2,cepsPsi);
+                multTable[1][1]=spp(k,kp,k2,k2);
+                multTable[1][2]=spp(k,kp,k2,cepsG2);
+                multTable[1][3]=spp(k,kp,k2,cepsG3);
+                multTable[1][4]=spp(k,kp,k2,k3);
+                multTable[2][0]=spp(k,kp,epsG2,cepsPsi);
+                multTable[2][1]=spp(k,kp,epsG2,k2);
+                multTable[2][2]=spp(k,kp,epsG2,cepsG2);
+                multTable[2][3]=spp(k,kp,epsG2,cepsG3);
+                multTable[2][4]=spp(k,kp,epsG2,k3);
+                multTable[3][0]=spp(k,kp,epsG3,cepsPsi);
+                multTable[3][1]=spp(k,kp,epsG3,k2);
+                multTable[3][2]=spp(k,kp,epsG3,cepsG2);
+                multTable[3][3]=spp(k,kp,epsG3,cepsG3);
+                multTable[3][4]=spp(k,kp,epsG3,k3);
+                multTable[4][0]=spp(k,kp,k3,cepsPsi);
+                multTable[4][1]=spp(k,kp,k3,k2);
+                multTable[4][2]=spp(k,kp,k3,cepsG2);
+                multTable[4][3]=spp(k,kp,k3,cepsG3);
+                multTable[4][4]=spp(k,kp,k3,k3);
 
                  
                  for(int iAmp=0; iAmp<nAmps; ++iAmp) {
