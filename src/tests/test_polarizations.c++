@@ -64,7 +64,7 @@ TEST_CASE("lepton_current") {
     cmplx eps[4];
     dbl_type w1=random.rand(0,1), w2=random.rand(0,1);
     dbl_type cos1=random.rand(-1,1), sin1=sqrt(1-cos1*cos1);
-    set_v4(k1,0,w1*sin1,w1*cos1,w1);
+    set_v4(k1,0,w1,0,w1);
     REQUIRE(is_zero(mass2(k1)));
     dbl_type cos2=random.rand(-1,1), sin2=sqrt(1-cos2*cos2);
     set_v4(k2,0,w2*sin2, w2*cos2,w2);
