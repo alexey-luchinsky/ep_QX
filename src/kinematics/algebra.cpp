@@ -162,21 +162,27 @@ void set_gluon_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4]
 
 void lepton_current(int state, dbl_type (&p1)[4], dbl_type (&p2)[4], cmplx (&eps)[4]) {
     const cmplx II=IMAGE_ONE;
+    cmplx norm=-4*sp(p1,p2);;
     if(state==0) {
-	 eps[0]=-((-p1[2] + p1[3])*(-p2[0] - II*p2[1])) - (-p1[0] + II*p1[1])*(-p2[2] + p2[3]);
-	 eps[1]=II*(-p1[2] + p1[3])*(-p2[0] - II*p2[1]) - II*(-p1[0] + II*p1[1])*(-p2[2] + p2[3]);
-	 eps[2]=-((p1[0] - II*p1[1])*(-p2[0] - II*p2[1])) - (-p1[2] + p1[3])*(-p2[2] + p2[3]);
-	 eps[3]=(-p1[0] + II*p1[1])*(-p2[0] - II*p2[1]) + (-p1[2] + p1[3])*(-p2[2] + p2[3]);
+        eps[0]=-((-p1[2] + p1[3])*(-p2[0] - II*p2[1])) - (-p1[0] + II*p1[1])*(-p2[2] + p2[3]);
+        eps[1]=II*(-p1[2] + p1[3])*(-p2[0] - II*p2[1]) - II*(-p1[0] + II*p1[1])*(-p2[2] + p2[3]);
+        eps[2]=-((p1[0] - II*p1[1])*(-p2[0] - II*p2[1])) - (-p1[2] + p1[3])*(-p2[2] + p2[3]);
+        eps[3]=(-p1[0] + II*p1[1])*(-p2[0] - II*p2[1]) + (-p1[2] + p1[3])*(-p2[2] + p2[3]);
+        norm=norm/(4*(p1[2] - p1[3])*(p2[2] - p2[3])*(p1[0]*p2[0] + p1[1]*p2[1] + p1[2]*p2[2] - p1[3]*p2[3]));
     }
     else if(state==1) {
 	 eps[0]=(p1[2] + p1[3])*(p2[0] + II*p2[1]) + (p1[0] - II*p1[1])*(p2[2] + p2[3]);
 	 eps[1]=-(II*(p1[2] + p1[3])*(p2[0] + II*p2[1])) + II*(p1[0] - II*p1[1])*(p2[2] + p2[3]);
 	 eps[2]=(-p1[0] + II*p1[1])*(p2[0] + II*p2[1]) + (p1[2] + p1[3])*(p2[2] + p2[3]);
 	 eps[3]=(p1[0] - II*p1[1])*(p2[0] + II*p2[1]) + (p1[2] + p1[3])*(p2[2] + p2[3]);
+         
+        norm=norm/(4*(p1[2] + p1[3])*(p2[2] + p2[3])*(p1[0]*p2[0] + p1[1]*p2[1] + p1[2]*p2[2] - p1[3]*p2[3]));
     }
     else {
         cout<<"Wrong lepton state "<<state<<endl;
+        return;
     };
+    for(int i=0; i<4; ++i) eps[i] = sqrt(norm)*eps[i];
 }
 
 

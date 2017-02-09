@@ -58,13 +58,13 @@ TEST_CASE("pol_sum") {
 
 }
 
-TEST_CASE("lepton_current_tr") {
-    Random random;
+TEST_CASE("lepton_current") {
+    Random random(10);
     dbl_type k1[4], k2[4],q[4];
     cmplx eps[4];
     dbl_type w1=random.rand(0,1), w2=random.rand(0,1);
     dbl_type cos1=random.rand(-1,1), sin1=sqrt(1-cos1*cos1);
-    set_v4(k1,0,0,w1,w1);
+    set_v4(k1,0,w1*sin1,w1*cos1,w1);
     REQUIRE(is_zero(mass2(k1)));
     dbl_type cos2=random.rand(-1,1), sin2=sqrt(1-cos2*cos2);
     set_v4(k2,0,w2*sin2, w2*cos2,w2);
@@ -80,5 +80,15 @@ TEST_CASE("lepton_current_tr") {
     REQUIRE(sp(eps,q).real()==Approx(0));
     REQUIRE_FALSE(sp(eps,q).real()==Approx(1));
     REQUIRE(sp(eps,q).imag()==Approx(0));
+    
+    // normalization
+    cmplx ceps[4];
+    lepton_current(0,k1,k2,eps);    conj_v4(ceps,eps);
+    REQUIRE( sp(eps,ceps).real() == Approx(-4*sp(k1,k2)));
+    REQUIRE( sp(eps,ceps).imag() == Approx(0));
+    lepton_current(1,k1,k2,eps);    conj_v4(ceps,eps);
+    REQUIRE( sp(eps,ceps).real() == Approx(-4*sp(k1,k2)));
+    REQUIRE( sp(eps,ceps).imag() == Approx(0));
+    
     
 }

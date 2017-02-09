@@ -97,6 +97,14 @@ void set_v4(dbl_type (&v)[4], dbl_type x, dbl_type y, dbl_type z, dbl_type t) {
 }
 
 inline 
+void conj_v4(cmplx (&out)[4], cmplx(in)[4]) {
+    out[0]=conj(in[0]);
+    out[1]=conj(in[1]);
+    out[2]=conj(in[2]);
+    out[3]=conj(in[3]);
+}
+
+inline 
 void set_v4(dbl_type (&vOut)[4], dbl_type vIn[4]) {
     vOut[0]=vIn[0];
     vOut[1]=vIn[1];
