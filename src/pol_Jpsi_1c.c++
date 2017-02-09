@@ -11,7 +11,7 @@ dbl_type Mcc=3.1, mc=Mcc/2, Opsi=0.270;
 dbl_type nanob=0.389e6, picob=1e3*nanob; // conversion to barn
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
 dbl_type ecm=10, x;
-bool gauge=false;
+bool gauge=true;
 
 #include "LHAPDF/LHAPDF.h"
 LHAPDF::PDF *lhapdf_pdf;
@@ -49,6 +49,9 @@ int main(void) {
     ramEP->set_minmaxY(minX,maxX);
     dbl_type zMin=0.2, zMax=0.9; 
 
+    gauge=true;
+    cout<<" gauge: "<<gauge<<endl;
+    
     int nBins=30;
     TFile file("out_pol.root","RECREATE");
     TNtuple tup("tup","tup","Q2:Y:pTpsi:W2:dsigma");
