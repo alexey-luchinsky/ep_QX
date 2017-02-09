@@ -76,6 +76,13 @@ cmplx sp(cmplx (&v1)[4], dbl_type (&v2)[4]);
 
 cmplx sp(dbl_type (&v2)[4], cmplx (&v1)[4]);
 
+
+dbl_type lcv(dbl_type (&v1)[4], dbl_type (&v2)[4], dbl_type (&v3)[4], dbl_type (&v4)[4]);
+cmplx lcv(cmplx (&v1)[4], dbl_type (&v2)[4], dbl_type (&v3)[4], dbl_type (&v4)[4]);
+cmplx lcv(cmplx (&v1)[4], cmplx (&v2)[4], dbl_type (&v3)[4], dbl_type (&v4)[4]);
+cmplx lcv(cmplx (&v1)[4], cmplx (&v2)[4], cmplx (&v3)[4], dbl_type (&v4)[4]);
+cmplx lcv(cmplx (&v1)[4], cmplx (&v2)[4], cmplx (&v3)[4], cmplx (&v4)[4]);
+
 template<typename T>
 inline
 T mass2(T (&v4)[4]) {
