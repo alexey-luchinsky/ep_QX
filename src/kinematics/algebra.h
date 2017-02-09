@@ -183,6 +183,8 @@ void set_psi_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4]);
 
 void set_psi_polarization(int state, dbl_type (&momentum)[4], cmplx (&answ)[4], cmplx (&cans)[4]);
 
+/************************** LEPTON CURRENT **************************/
+void lepton_current(int state, dbl_type (&p1)[4], dbl_type (&p2)[4], cmplx (&eps)[4]);
 
 /************************** UTIL **************************/
 
