@@ -11,7 +11,7 @@ dbl_type Mcc=3.1, mc=Mcc/2, Opsi=0.270;
 dbl_type nanob=0.389e6, picob=1e3*nanob; // conversion to barn
 dbl_type PI=acos(-1), alpha=1./137, alphas=0.3;
 dbl_type ecm=10, x;
-bool gauge=true;
+bool gauge=false;
 
 #include "LHAPDF/LHAPDF.h"
 LHAPDF::PDF *lhapdf_pdf;
