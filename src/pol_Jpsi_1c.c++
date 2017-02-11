@@ -18,14 +18,10 @@ LHAPDF::PDF *lhapdf_pdf;
 
 void write_histogram_to_file(TH1F &histogram, string file_name);
 bool kinematics(RamboEP *ramEP);
-dbl_type getMatr2_3S1_cs(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv);
-dbl_type getMatr2_3S1_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv);
-dbl_type getMatr2_1S0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv);
-dbl_type getMatr2_3P0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv);
+dbl_type getMatr2_3S1_cs();
+dbl_type getMatr2_3S1_co();
+dbl_type getMatr2_1S0_co();
+dbl_type getMatr2_3P0_co();
 
 dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
 
@@ -115,10 +111,10 @@ int main(void) {
         dbl_type pdf = lhapdf_pdf->xfxQ2(0, (double)x, (double)Q2_scale)/x;
 
         dbl_type wt=ramEP->wt;
-        dbl_type matr2CS=getMatr2_3S1_cs(k,kp,k1,k2,k3,pPsi,nPassed);
-        dbl_type matr2CO=getMatr2_3S1_co(k,kp,k1,k2,k3,pPsi,nPassed);
-        dbl_type matr2CO2=getMatr2_1S0_co(k,kp,k1,k2,k3,pPsi,nPassed);
-        dbl_type matr2CO3=getMatr2_3P0_co(k,kp,k1,k2,k3,pPsi,nPassed);
+        dbl_type matr2CS=getMatr2_3S1_cs();
+        dbl_type matr2CO=getMatr2_3S1_co();
+        dbl_type matr2CO2=getMatr2_1S0_co();
+        dbl_type matr2CO3=getMatr2_3P0_co();
         if(!(matr2CS>0 && matr2CO>0 && matr2CO2>0)) {
             nNegative++;
             continue;

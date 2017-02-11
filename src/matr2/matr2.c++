@@ -152,23 +152,19 @@ dbl_type getMatr2(std::function<cmplx (void)>ampFunc, int nPolPsi) {
     return matr2;
 }
 
-dbl_type getMatr2_3S1_cs(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv) {
+dbl_type getMatr2_3S1_cs() {
     return getMatr2(amp_3S1_cs,3);
 }
 
-dbl_type getMatr2_3S1_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv) {
+dbl_type getMatr2_3S1_co() {
     return getMatr2(amp_3S1_co,3);
 }
 
-dbl_type getMatr2_1S0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv) {
+dbl_type getMatr2_1S0_co() {
     return getMatr2(amp_1S0_co,1);
 }
 
-dbl_type getMatr2_3P0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
-                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv) {
+dbl_type getMatr2_3P0_co() {
     return getMatr2(amp_3P0_co,1);
 }
 
