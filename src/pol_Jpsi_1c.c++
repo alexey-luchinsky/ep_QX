@@ -24,6 +24,8 @@ dbl_type getMatr2_3S1_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], db
                 dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv);
 dbl_type getMatr2_1S0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
                 dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv);
+dbl_type getMatr2_3P0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
+                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv);
 
 dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
 
@@ -49,7 +51,7 @@ int main(void) {
     ramEP->set_minmaxY(minX,maxX);
     dbl_type zMin=0.2, zMax=0.9; 
 
-    gauge=false;
+    gauge=true;
     cout<<" gauge: "<<gauge<<endl;
     
     int nBins=30;
@@ -73,14 +75,22 @@ int main(void) {
     TH1F hY_co2("hY_co2","hY_co2",nBins,0,1); hY_co2.Sumw2();
     TH1F hW_co2("hW_co2","hW_co2",nBins,sqrt(minW2),sqrt(maxW2)); hW_co2.Sumw2();
     
+    TH1F hPT2_co3("hPT2_co3","hPT2_co3",nBins,0,30); hPT2_co3.Sumw2();
+    TH1F hQ2_co3("hQ2_co3","hQ2_co3",nBins,minQ2,maxQ2); hQ2_co3.Sumw2();
+    TH1F hZ_co3("hZ_co3","hZ_co3",nBins,0,1); hZ_co3.Sumw2();
+    TH1F hY_co3("hY_co3","hY_co3",nBins,0,1); hY_co3.Sumw2();
+    TH1F hW_co3("hW_co3","hW_co3",nBins,sqrt(minW2),sqrt(maxW2)); hW_co3.Sumw2();
+
+
     dbl_type Q2_scale;
     int nEv=1e7, nPassed=0, nNegative=0;
-    dbl_type sum=0, dsigmaCS, sigmaCS=0, dsigmaCO, sigmaCO=0, dsigmaCO2, sigmaCO2=0;
+    dbl_type sum=0, dsigmaCS, sigmaCS=0, dsigmaCO, sigmaCO=0, dsigmaCO2, sigmaCO2=0, dsigmaCO3, sigmaCO3=0;
     for(int iEv=0; iEv<nEv; ++iEv) {
         if( iEv % (nEv/100) == 0 && iEv>0) cout<<"---- Event "<<iEv<<" ("
                 <<(int)(100.*iEv/nEv)<<" %) --- sigmaCS="<<sigmaCS*nEv/iEv<<" pb"
                 " sigmaCO="<<sigmaCO*nEv/iEv<<" pb"<<
-                " sigmaCO2="<<sigmaCO2*nEv/iEv<<" pb"<<endl;
+                " sigmaCO2="<<sigmaCO2*nEv/iEv<<" pb"<<
+                " sigmaCO3="<<sigmaCO3*nEv/iEv<<" pb"<<endl;
         x=random->rand(minX,maxX);
 
         if(!kinematics(ramEP)) continue;
@@ -108,6 +118,7 @@ int main(void) {
         dbl_type matr2CS=getMatr2_3S1_cs(k,kp,k1,k2,k3,pPsi,nPassed);
         dbl_type matr2CO=getMatr2_3S1_co(k,kp,k1,k2,k3,pPsi,nPassed);
         dbl_type matr2CO2=getMatr2_1S0_co(k,kp,k1,k2,k3,pPsi,nPassed);
+        dbl_type matr2CO3=getMatr2_3P0_co(k,kp,k1,k2,k3,pPsi,nPassed);
         if(!(matr2CS>0 && matr2CO>0 && matr2CO2>0)) {
             nNegative++;
             continue;
@@ -137,6 +148,14 @@ int main(void) {
         dsigmaCO2 *= picob;
         sigmaCO2 += dsigmaCO2;
         
+        dsigmaCO3=1;
+        dsigmaCO3 *= matr2CO3*pdf*wt;
+        dsigmaCO3 *= 1./4/8; // polarizations and initial gluon spin
+        dsigmaCO3 *= 1./(2*x*pow(ecm,2)); // 4 I
+        dsigmaCO3 *= 1./nEv;
+        dsigmaCO3 *= picob;
+        sigmaCO3 += dsigmaCO3;
+
         tup.Fill(ramEP->Q2,ramEP->Y,pT(pPsi), W2, dsigmaCS);
         hPT2_cs.Fill(pT_squared(pPsi),dsigmaCS);
         hQ2_cs.Fill(ramEP->Q2,dsigmaCS);
@@ -155,6 +174,12 @@ int main(void) {
         hZ_co2.Fill(z,dsigmaCO2);
         hY_co2.Fill(ramEP->Y,dsigmaCO2);
         hW_co2.Fill(sqrt(W2),dsigmaCO2);
+
+        hPT2_co3.Fill(pT_squared(pPsi),dsigmaCO3);
+        hQ2_co3.Fill(ramEP->Q2,dsigmaCO3);
+        hZ_co3.Fill(z,dsigmaCO3);
+        hY_co3.Fill(ramEP->Y,dsigmaCO3);
+        hW_co3.Fill(sqrt(W2),dsigmaCO3);
 
         ++nPassed;
     };
@@ -178,6 +203,13 @@ int main(void) {
     write_histogram_to_file(hZ_co2,"hZ_co2.hst");
     write_histogram_to_file(hY_co2,"hY_co2.hst");
     write_histogram_to_file(hW_co2,"hW_co2.hst");
+
+    write_histogram_to_file(hPT2_co3,"hPT2_co3.hst");
+    write_histogram_to_file(hQ2_co3,"hQ2_co3.hst");
+    write_histogram_to_file(hZ_co3,"hZ_co3.hst");
+    write_histogram_to_file(hY_co3,"hY_co3.hst");
+    write_histogram_to_file(hW_co3,"hW_co3.hst");
+
 
     cout<<" sigmaCS="<<sigmaCS<<" pb"<<endl;
     cout<<" sigmaCO="<<sigmaCO<<" pb"<<endl;

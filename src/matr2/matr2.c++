@@ -170,4 +170,31 @@ dbl_type getMatr2_1S0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], db
     return matr2;
 }
 
+dbl_type getMatr2_3P0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], dbl_type(&k2)[4], 
+                dbl_type(&k3)[4], dbl_type(&pPsi)[4], int iEv) {
+    dbl_type matr2=0;
+    dbl_type Q2=-mass2(k1);
+    for(int iG1=0; iG1<2; ++iG1) {
+        lepton_current(iG1,k,kp,epsG1);
+//        println_4v("epsG1",epsG1);
+        for(int iG2=0; iG2<2; ++iG2) {
+            set_gluon_polarization(iG2, k2, epsG2);
+            if(gauge) for(int i=0; i<4; ++i) epsG2[i]=k2[i];
+            for(int iG3=0; iG3<2; ++iG3) {
+                set_gluon_polarization(iG3,k3,epsG3);
+                cmplx sunf=COMPLEX_ZERO;
+                sunf += sp(epsG1,epsG2)*(-(sp(k2,pPsi)*(sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi))*(8*pow(mc,2)*pow(sp(k2,k3),3) + sp(k2,k3)*(3*pow(sp(k2,pPsi),2) + pow(sp(k3,pPsi),2) + 4*sp(k2,pPsi)*(3*pow(mc,2) - sp(k3,pPsi)))*sp(k3,pPsi) + sp(k2,pPsi)*(sp(k2,pPsi) - sp(k3,pPsi))*(4*pow(mc,2) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi) + pow(sp(k2,k3),2)*(-pow(sp(k3,pPsi),2) + sp(k2,pPsi)*(4*pow(mc,2) + 3*sp(k3,pPsi))))));
+                sunf += sp(epsG1,epsG3)*(-((sp(epsG2,pPsi)*sp(k2,k3) - sp(epsG2,k3)*sp(k2,pPsi))*sp(k3,pPsi)*(8*pow(mc,2)*pow(sp(k2,k3),3) + sp(k2,pPsi)*(sp(k2,pPsi) - sp(k3,pPsi))*(4*pow(mc,2) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi) - pow(sp(k2,k3),2)*(pow(sp(k2,pPsi),2) + 4*pow(mc,2)*sp(k3,pPsi) - 3*sp(k2,pPsi)*sp(k3,pPsi)) - sp(k2,k3)*sp(k2,pPsi)*(pow(sp(k2,pPsi),2) - 4*sp(k2,pPsi)*sp(k3,pPsi) + 3*sp(k3,pPsi)*(-4*pow(mc,2) + sp(k3,pPsi))))));
+                sunf += sp(epsG1,pPsi)*(sp(k2,k3)*sp(k2,pPsi)*sp(k3,pPsi)*(sp(k2,pPsi) + sp(k3,pPsi))*(sp(epsG2,k3)*(-(sp(epsG3,pPsi)*sp(k2,pPsi)) + sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))) - sp(epsG2,epsG3)*(sp(k2,k3) + sp(k2,pPsi))*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsG2,pPsi)*(sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi))));
+                sunf += sp(epsG1,k3)*(sp(epsG2,pPsi)*(sp(epsG3,pPsi)*sp(k2,k3)*sp(k2,pPsi)*(pow(sp(k3,pPsi),2)*(-4*pow(mc,2) - sp(k2,pPsi) + sp(k3,pPsi)) + pow(sp(k2,k3),2)*(-8*pow(mc,2) + 2*sp(k3,pPsi)) - 2*sp(k2,k3)*(sp(k2,pPsi)*(2*pow(mc,2) - sp(k3,pPsi)) + sp(k3,pPsi)*(-4*pow(mc,2) + sp(k3,pPsi)))) + sp(epsG3,k2)*sp(k3,pPsi)*(8*pow(mc,2)*pow(sp(k2,k3),3) + pow(sp(k2,pPsi),2)*(4*pow(mc,2) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi) - sp(k2,k3)*sp(k2,pPsi)*(pow(sp(k2,pPsi),2) + sp(k3,pPsi)*(-4*pow(mc,2) + sp(k3,pPsi)) - 2*sp(k2,pPsi)*(2*pow(mc,2) + sp(k3,pPsi))) + pow(sp(k2,k3),2)*(-pow(sp(k2,pPsi),2) - 4*pow(mc,2)*sp(k3,pPsi) + sp(k2,pPsi)*(8*pow(mc,2) + sp(k3,pPsi))))) + sp(k2,pPsi)*(-(sp(epsG2,epsG3)*(sp(k2,k3) + sp(k2,pPsi))*sp(k3,pPsi)*(8*pow(mc,2)*pow(sp(k2,k3),2) + sp(k2,pPsi)*(4*pow(mc,2) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi) + sp(k2,k3)*sp(k2,pPsi)*(4*pow(mc,2) - sp(k2,pPsi) + sp(k3,pPsi)))) + sp(epsG2,k3)*(4*pow(mc,2)*sp(epsG3,k2)*sp(k2,k3)*sp(k3,pPsi)*(sp(k2,pPsi) + sp(k3,pPsi)) + sp(epsG3,pPsi)*sp(k2,pPsi)*(pow(sp(k2,k3),2)*(8*pow(mc,2) - 2*sp(k3,pPsi)) + pow(sp(k3,pPsi),2)*(4*pow(mc,2) + sp(k2,pPsi) - sp(k3,pPsi)) + 2*sp(k2,k3)*(sp(k2,pPsi)*(2*pow(mc,2) - sp(k3,pPsi)) + sp(k3,pPsi)*(-4*pow(mc,2) + sp(k3,pPsi)))))));
+                sunf += sp(epsG1,k2)*(-(sp(k3,pPsi)*(sp(epsG2,epsG3)*sp(k2,pPsi)*(sp(k2,k3) - sp(k3,pPsi))*(8*pow(mc,2)*pow(sp(k2,k3),2) + sp(k2,pPsi)*(4*pow(mc,2) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi) - sp(k2,k3)*sp(k3,pPsi)*(4*pow(mc,2) - sp(k2,pPsi) + sp(k3,pPsi))) - sp(epsG2,pPsi)*(sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi))*(2*pow(sp(k2,k3),2)*(4*pow(mc,2) + sp(k2,pPsi)) + pow(sp(k2,pPsi),2)*(4*pow(mc,2) + sp(k2,pPsi) - sp(k3,pPsi)) + 2*sp(k2,k3)*(pow(sp(k2,pPsi),2) + sp(k2,pPsi)*(4*pow(mc,2) - sp(k3,pPsi)) - 2*pow(mc,2)*sp(k3,pPsi))))) + sp(epsG2,k3)*sp(k2,pPsi)*(-4*pow(mc,2)*sp(epsG3,k2)*sp(k2,k3)*sp(k3,pPsi)*(sp(k2,pPsi) + sp(k3,pPsi)) + sp(epsG3,pPsi)*(8*pow(mc,2)*pow(sp(k2,k3),3) + pow(sp(k3,pPsi),2)*sp(k2,pPsi)*(-4*pow(mc,2) - sp(k2,pPsi) + sp(k3,pPsi)) + sp(k2,k3)*sp(k3,pPsi)*(pow(sp(k2,pPsi),2) + sp(k2,pPsi)*(4*pow(mc,2) - 2*sp(k3,pPsi)) + sp(k3,pPsi)*(4*pow(mc,2) + sp(k3,pPsi))) + pow(sp(k2,k3),2)*(sp(k2,pPsi)*(4*pow(mc,2) + sp(k3,pPsi)) - sp(k3,pPsi)*(8*pow(mc,2) + sp(k3,pPsi))))));
+                sunf *= (-32*alpha*alphas*pow(PI,2)*sqrt(2))/(3.*mc*Q2*pow(sp(k2,pPsi),2)*pow(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi),2)*pow(sp(k3,pPsi),2)*sp(k2,k3));
+                sunf *= sqrt(1.*24);  // SUNF^2 
+                matr2 += pow(abs(sunf),2);
+//                    cout<<"matr2="<<matr2<<endl;
+            }
+        }
+    }
+    return matr2;
+}
 
