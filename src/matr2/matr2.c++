@@ -161,7 +161,7 @@ dbl_type getMatr2_1S0_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], db
                 sunf += sp(epsG1,k3)*(lcv(epsG2,epsG3,k2,pPsi)*sp(k2,k3)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi)));
                 sunf += lcv(epsG1,epsG2,epsG3,k2)*(-(sp(k2,k3)*sp(k3,pPsi)*(sp(k2,pPsi) + sp(k3,pPsi))));
                 sunf *= (-16*alpha*alphas*pow(PI,2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,k3)*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
-                sunf *= sqrt(24.);
+                sunf *= sqrt(1.*24);  // SUNF^2 
                 matr2 += pow(abs(sunf),2);
 //                    cout<<"matr2="<<matr2<<endl;
             }
