@@ -124,7 +124,8 @@ dbl_type getMatr2_3S1_co(dbl_type(&k)[4], dbl_type(&kp)[4], dbl_type(&k1)[4], db
                         sund += sp(epsG1,epsG2)*(-(sp(epsG3,pPsi)*sp(epsPsi,k2)*sp(k2,k3)) + sp(epsG3,epsPsi)*sp(k2,k3)*(-sp(k2,k3) + sp(k3,pPsi)) + sp(epsG3,k2)*(sp(epsPsi,k3)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsPsi,k2)*sp(k3,pPsi)));
                         sund += sp(epsG1,k3)*(-(sp(epsG2,pPsi)*sp(epsG3,epsPsi)*sp(k2,k3)) - sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,k3) + sp(epsG2,k3)*sp(epsG3,epsPsi)*sp(k2,pPsi) - sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,pPsi) + sp(epsG2,epsPsi)*sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi)));
                         sund += sp(epsG1,k2)*(sp(epsG2,k3)*sp(epsG3,epsPsi)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsG2,epsG3)*sp(epsPsi,k3)*(-sp(k2,k3) + sp(k3,pPsi)) + sp(epsG2,epsPsi)*(sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi)));
-                        sund *= (-128*alpha*alphas*mc*pow(PI,2)*sqrt(10)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+                        sund *= (-64*alpha*alphas*mc*pow(PI,2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+                        sund *= sqrt(1.*40/3);  // SUND^2 
                         matr2 += pow(abs(sund),2);
                }
             }
