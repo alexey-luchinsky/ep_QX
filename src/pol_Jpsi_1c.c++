@@ -51,7 +51,7 @@ int main(void) {
     ramEP->set_minmaxY(minX,maxX);
     dbl_type zMin=0.2, zMax=0.9; 
 
-    gauge=true;
+    gauge=false;
     cout<<" gauge: "<<gauge<<endl;
     
     int nBins=30;
