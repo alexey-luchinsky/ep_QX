@@ -11,7 +11,7 @@ extern dbl_type mc, Mcc, ecm, PI, alpha, alphas, Opsi, x;
 extern dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
 extern bool gauge;
 cmplx epsG1[4], epsG2[4], epsG3[4], epsPsi[4];
-dbl_type Q2;
+extern dbl_type Q2;
 
 void write_histogram_to_file(TH1F &histogram, string file_name) {
     const char *__file_name__ = file_name.c_str();
