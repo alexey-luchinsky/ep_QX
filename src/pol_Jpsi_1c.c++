@@ -10,7 +10,8 @@
 #include <tclap/CmdLine.h>
 
 
-dbl_type Mcc = 3.1, mc = Mcc / 2, Opsi = 0.270;
+dbl_type Mcc = 3.1, mc = Mcc / 2;
+dbl_type Opsi=0.270, O3S11 = 0.270;
 dbl_type nanob = 0.389e6, picob = 1e3 * nanob; // conversion to barn
 dbl_type PI = acos(-1), alpha = 1. / 137, alphas = 0.3;
 dbl_type x;
@@ -159,8 +160,8 @@ int main(int argc, char **argv) {
     int nPassed = 0, nNegative = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
         if (iEv % (nEv / 100) == 0 && iEv > 0) cout << "---- Event " << iEv << " ("
-                << (int) (100. * iEv / nEv) << " %)"<<endl;
-//                " --- sigmaCS=" << sigmaCS * nEv / iEv << " pb"
+                << (int) (100. * iEv / nEv) << " %)"<<
+                " --- sigmaCS=" << Sigma[0] * nEv / iEv << " pb" << endl;
 //                " sigmaCO=" << sigmaCO * nEv / iEv << " pb" <<
 //                " sigmaCO2=" << sigmaCO2 * nEv / iEv << " pb" <<
 //                " sigmaCO3=" << sigmaCO3 * nEv / iEv << " pb" << endl;
