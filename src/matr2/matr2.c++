@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 
 extern dbl_type mc, Mcc, ecm, PI, alpha, alphas, x;
-extern dbl_type Opsi, O3S11;
+extern dbl_type Opsi, O3S11, O3S18;
 extern dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
 extern bool gauge;
 cmplx epsG1[4], epsG2[4], epsG3[4], epsPsi[4];
@@ -46,13 +46,6 @@ bool kinematics(RamboEP *ramEP) {
 };
 
 cmplx amp_3S1_cs() {
-//    cmplx amp=COMPLEX_ZERO;
-//    amp += sp(epsG1,epsPsi)*(4*(sp(epsG2,k3)*(sp(epsG3,pPsi)*sp(k2,pPsi) - sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))) + sp(epsG2,epsG3)*(sp(k2,k3) + sp(k2,pPsi))*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsG2,pPsi)*(-(sp(epsG3,pPsi)*sp(k2,k3)) + sp(epsG3,k2)*sp(k3,pPsi))));
-//    amp += sp(epsG1,epsG3)*(4*(-(sp(k2,k3)*(-(sp(epsG2,pPsi)*sp(epsPsi,k3)) + sp(epsG2,epsPsi)*(sp(k2,k3) + sp(k2,pPsi)))) + sp(epsG2,k3)*(-(sp(epsPsi,k3)*sp(k2,pPsi)) + sp(epsPsi,k2)*(sp(k2,k3) + sp(k2,pPsi)))));
-//    amp += sp(epsG1,epsG2)*(4*(-(sp(epsG3,pPsi)*sp(epsPsi,k2)*sp(k2,k3)) + sp(epsG3,epsPsi)*sp(k2,k3)*(-sp(k2,k3) + sp(k3,pPsi)) + sp(epsG3,k2)*(sp(epsPsi,k3)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsPsi,k2)*sp(k3,pPsi))));
-//    amp += sp(epsG1,k3)*(-4*(sp(epsG2,pPsi)*sp(epsG3,epsPsi)*sp(k2,k3) + sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,k3) - sp(epsG2,k3)*sp(epsG3,epsPsi)*sp(k2,pPsi) + sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,pPsi) - sp(epsG2,epsPsi)*sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi))));
-//    amp += sp(epsG1,k2)*(4*(sp(epsG2,k3)*sp(epsG3,epsPsi)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsG2,epsG3)*sp(epsPsi,k3)*(-sp(k2,k3) + sp(k3,pPsi)) + sp(epsG2,epsPsi)*(sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi))));
-//    amp *= (-64*alpha*alphas*mc*pow(PI,2)*sqrt(2)*sqrt(Opsi/mc))/(9.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
 	 cmplx amp=COMPLEX_ZERO;
 	 amp += sp(epsG1,epsPsi)*(sp(epsG2,k3)*(sp(epsG3,pPsi)*sp(k2,pPsi) - sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))) + sp(epsG2,epsG3)*(sp(k2,k3) + sp(k2,pPsi))*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsG2,pPsi)*(-(sp(epsG3,pPsi)*sp(k2,k3)) + sp(epsG3,k2)*sp(k3,pPsi)));
 	 amp += sp(epsG1,epsG3)*(-(sp(k2,k3)*(-(sp(epsG2,pPsi)*sp(epsPsi,k3)) + sp(epsG2,epsPsi)*(sp(k2,k3) + sp(k2,pPsi)))) + sp(epsG2,k3)*(-(sp(epsPsi,k3)*sp(k2,pPsi)) + sp(epsPsi,k2)*(sp(k2,k3) + sp(k2,pPsi))));
@@ -64,14 +57,14 @@ cmplx amp_3S1_cs() {
 }
 
 cmplx amp_3S1_co() {
-    cmplx sund = COMPLEX_ZERO;
-    sund += sp(epsG1, epsPsi)*(sp(epsG2, k3)*(sp(epsG3, pPsi) * sp(k2, pPsi) - sp(epsG3, k2)*(sp(k2, k3) + sp(k2, pPsi) - sp(k3, pPsi))) + sp(epsG2, epsG3)*(sp(k2, k3) + sp(k2, pPsi))*(sp(k2, k3) - sp(k3, pPsi)) + sp(epsG2, pPsi)*(-(sp(epsG3, pPsi) * sp(k2, k3)) + sp(epsG3, k2) * sp(k3, pPsi)));
-    sund += sp(epsG1, epsG3)*(-(sp(k2, k3)*(-(sp(epsG2, pPsi) * sp(epsPsi, k3)) + sp(epsG2, epsPsi)*(sp(k2, k3) + sp(k2, pPsi)))) + sp(epsG2, k3)*(-(sp(epsPsi, k3) * sp(k2, pPsi)) + sp(epsPsi, k2)*(sp(k2, k3) + sp(k2, pPsi))));
-    sund += sp(epsG1, epsG2)*(-(sp(epsG3, pPsi) * sp(epsPsi, k2) * sp(k2, k3)) + sp(epsG3, epsPsi) * sp(k2, k3)*(-sp(k2, k3) + sp(k3, pPsi)) + sp(epsG3, k2)*(sp(epsPsi, k3)*(sp(k2, k3) - sp(k3, pPsi)) + sp(epsPsi, k2) * sp(k3, pPsi)));
-    sund += sp(epsG1, k3)*(-(sp(epsG2, pPsi) * sp(epsG3, epsPsi) * sp(k2, k3)) - sp(epsG2, epsG3) * sp(epsPsi, k2) * sp(k2, k3) + sp(epsG2, k3) * sp(epsG3, epsPsi) * sp(k2, pPsi) - sp(epsG2, epsG3) * sp(epsPsi, k2) * sp(k2, pPsi) + sp(epsG2, epsPsi) * sp(epsG3, k2)*(sp(k2, k3) + sp(k2, pPsi)));
-    sund += sp(epsG1, k2)*(sp(epsG2, k3) * sp(epsG3, epsPsi)*(sp(k2, k3) - sp(k3, pPsi)) + sp(epsG2, epsG3) * sp(epsPsi, k3)*(-sp(k2, k3) + sp(k3, pPsi)) + sp(epsG2, epsPsi)*(sp(epsG3, pPsi) * sp(k2, k3) - sp(epsG3, k2) * sp(k3, pPsi)));
-    sund *= (-64 * alpha * alphas * mc * pow(PI, 2) * sqrt(Opsi / mc)) / (9. * Q2 * sp(k2, pPsi)*(2 * sp(k2, k3) + sp(k2, pPsi) - sp(k3, pPsi)) * sp(k3, pPsi));
-    sund *= sqrt(1. * 40 / 3); // SUND^2 
+    cmplx sund=COMPLEX_ZERO;
+    sund += sp(epsG1,epsPsi)*(sp(epsG2,k3)*(sp(epsG3,pPsi)*sp(k2,pPsi) - sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))) + sp(epsG2,epsG3)*(sp(k2,k3) + sp(k2,pPsi))*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsG2,pPsi)*(-(sp(epsG3,pPsi)*sp(k2,k3)) + sp(epsG3,k2)*sp(k3,pPsi)));
+    sund += sp(epsG1,epsG3)*(-(sp(k2,k3)*(-(sp(epsG2,pPsi)*sp(epsPsi,k3)) + sp(epsG2,epsPsi)*(sp(k2,k3) + sp(k2,pPsi)))) + sp(epsG2,k3)*(-(sp(epsPsi,k3)*sp(k2,pPsi)) + sp(epsPsi,k2)*(sp(k2,k3) + sp(k2,pPsi))));
+    sund += sp(epsG1,epsG2)*(-(sp(epsG3,pPsi)*sp(epsPsi,k2)*sp(k2,k3)) + sp(epsG3,epsPsi)*sp(k2,k3)*(-sp(k2,k3) + sp(k3,pPsi)) + sp(epsG3,k2)*(sp(epsPsi,k3)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsPsi,k2)*sp(k3,pPsi)));
+    sund += sp(epsG1,k3)*(-(sp(epsG2,pPsi)*sp(epsG3,epsPsi)*sp(k2,k3)) - sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,k3) + sp(epsG2,k3)*sp(epsG3,epsPsi)*sp(k2,pPsi) - sp(epsG2,epsG3)*sp(epsPsi,k2)*sp(k2,pPsi) + sp(epsG2,epsPsi)*sp(epsG3,k2)*(sp(k2,k3) + sp(k2,pPsi)));
+    sund += sp(epsG1,k2)*(sp(epsG2,k3)*sp(epsG3,epsPsi)*(sp(k2,k3) - sp(k3,pPsi)) + sp(epsG2,epsG3)*sp(epsPsi,k3)*(-sp(k2,k3) + sp(k3,pPsi)) + sp(epsG2,epsPsi)*(sp(epsG3,pPsi)*sp(k2,k3) - sp(epsG3,k2)*sp(k3,pPsi)));
+    sund *= (-32*alpha*alphas*pow(PI,2)*sqrt(0.6666666666666666)*sqrt(mc*O3S18))/(3.*Q2*sp(k2,pPsi)*(2*sp(k2,k3) + sp(k2,pPsi) - sp(k3,pPsi))*sp(k3,pPsi));
+    sund *= sqrt(40/3.);
     return sund;
 }
 

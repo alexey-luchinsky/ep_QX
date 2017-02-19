@@ -11,7 +11,8 @@
 
 
 dbl_type Mcc = 3.1, mc = Mcc / 2;
-dbl_type O3S11 = 0.270;
+dbl_type O3S11 = 0.270;  // from Gee 
+dbl_type O3S18 = 6.6e-3; // from hep-ph/9511315, Table I
 dbl_type Opsi=0.270;
 dbl_type nanob = 0.389e6, picob = 1e3 * nanob; // conversion to barn
 dbl_type PI = acos(-1), alpha = 1. / 137, alphas = 0.3;
@@ -80,6 +81,7 @@ void init_from_command_line(int argc, char **argv) {
     ldme=arg_ldme.getValue();
     if(!ldme) {
         O3S11=1;
+        O3S18=1;
     };
 }
 
