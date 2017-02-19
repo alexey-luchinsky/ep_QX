@@ -11,7 +11,8 @@
 
 
 dbl_type Mcc = 3.1, mc = Mcc / 2;
-dbl_type Opsi=0.270, O3S11 = 0.270;
+dbl_type O3S11 = 0.270;
+dbl_type Opsi=0.270;
 dbl_type nanob = 0.389e6, picob = 1e3 * nanob; // conversion to barn
 dbl_type PI = acos(-1), alpha = 1. / 137, alphas = 0.3;
 dbl_type x;
@@ -38,6 +39,7 @@ bool gauge;
 string pdf_set_name;
 int nBins;
 dbl_type xi;
+bool ldme;
 
 
 
@@ -60,6 +62,7 @@ void init_from_command_line(int argc, char **argv) {
     TCLAP::ValueArg<string> arg_pdfName("p", "pdf", "name of PDF set", false, "cteq6l1", "string", cmd);
     TCLAP::ValueArg<int> arg_bins("b", "bins", "number histigram bins", false, 30, "int", cmd);
     TCLAP::ValueArg<double> arg_xi("x", "xi", "scale parameter", false, 1, "double", cmd);
+    TCLAP::SwitchArg arg_ldme("", "ldme", "whether multiply final answers by LDMEs", cmd, false);
 
     cmd.parse(argc, argv);
     nEv = (int) arg_nEv.getValue();
@@ -74,6 +77,10 @@ void init_from_command_line(int argc, char **argv) {
     pdf_set_name=arg_pdfName.getValue();
     nBins=arg_bins.getValue();
     xi=arg_xi.getValue();
+    ldme=arg_ldme.getValue();
+    if(!ldme) {
+        O3S11=1;
+    };
 }
 
 const int nChannels=4;
@@ -150,6 +157,7 @@ int main(int argc, char **argv) {
     ramEP->set_minmaxY(minX, maxX);
 
     cout << " gauge: " << gauge << endl;
+    cout << " ldme "<<ldme<<endl;
 
     TFile file("out_pol.root", "RECREATE");
     TNtuple tup("tup", "tup", "Q2:Y:pTpsi:W2:dsigma");
@@ -159,9 +167,11 @@ int main(int argc, char **argv) {
     dbl_type Q2_scale;
     int nPassed = 0, nNegative = 0;
     for (int iEv = 0; iEv < nEv; ++iEv) {
-        if (iEv % (nEv / 100) == 0 && iEv > 0) cout << "---- Event " << iEv << " ("
-                << (int) (100. * iEv / nEv) << " %)"<<
-                " --- sigmaCS=" << Sigma[0] * nEv / iEv << " pb" << endl;
+        if (iEv % (nEv / 100) == 0 && iEv > 0) {
+            cout << "---- Event " << iEv << " ("<< (int) (100. * iEv / nEv) << " %)";
+            if(ldme) cout<<" --- sigmaCS=" << Sigma[0] * nEv / iEv << " pb" << endl;
+            else cout<<" --- sigmaCS/LDME=" << Sigma[0] * nEv / iEv << " pb*GeV^(-3)" << endl;
+        };
 //                " sigmaCO=" << sigmaCO * nEv / iEv << " pb" <<
 //                " sigmaCO2=" << sigmaCO2 * nEv / iEv << " pb" <<
 //                " sigmaCO3=" << sigmaCO3 * nEv / iEv << " pb" << endl;
