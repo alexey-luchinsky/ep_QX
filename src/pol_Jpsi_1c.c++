@@ -103,8 +103,9 @@ TH1F *hPT2[nChannels], *hQ2[nChannels], *hY[nChannels], *hZ[nChannels], *hW[nCha
 dbl_type dSigma[nChannels], Sigma[nChannels];
 std::function<dbl_type (void)> matr2_func[nChannels];
 
-string tuple_vars="Q2:Y:pTpsi:W2";
-Float_t tuple_vals[4+nChannels];
+const int nVars=5;
+string tuple_vars="Q2:Y:pTpsi:W2:z";
+Float_t tuple_vals[nVars+nChannels];
 
 void init_channels(void) {
     channel_name[0]="3S1_cs"; //matr2_func[0]=getMatr2_3S1_cs();
@@ -216,11 +217,12 @@ int main(int argc, char **argv) {
         if (Q2 < minQ2 || Q2 > maxQ2) continue;
 
 //string tuple_vars="Q2:Y:pTpsi:W2";
-//Float_t tuple_vals[4+nChannels];
+//Float_t tuple_vals[nVars+nChannels];
         tuple_vals[0]=Q2;
         tuple_vals[1]=Y;
         tuple_vals[2]=pT(pPsi);
         tuple_vals[3]=W2;
+        tuple_vals[4]=z;
         
         Q2_scale = pow(xi * pT(pPsi), 2);
         Q2_scale = xi * xi * (Q2 + Mcc * Mcc);
@@ -242,7 +244,7 @@ int main(int argc, char **argv) {
 
         for(int iChannel=0; iChannel<nChannels; ++iChannel) {
             dSigma[iChannel]=norm_sigma*matr2[iChannel];
-            tuple_vals[4+iChannel]=dSigma[iChannel]*nEv;
+            tuple_vals[nVars+iChannel]=dSigma[iChannel]*nEv;
             Sigma[iChannel] += dSigma[iChannel];
         };
 
