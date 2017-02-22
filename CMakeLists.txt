@@ -49,25 +49,12 @@ include_directories(${ROOT_INCLUDE_DIR})
 file(GLOB_RECURSE TESTS_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++" "src/tests/*.c++")
 add_executable(test.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test.c++" ${TESTS_SOURCE_FILES})
 
-#file(GLOB_RECURSE Jpsi_1c_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++"  "src/matr2/*.c++")
-#add_executable(Jpsi_1c.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/Jpsi_1c.c++" ${Jpsi_1c_SOURCE_FILES})
-#target_link_libraries(Jpsi_1c.exe ${ROOT_LIBRARIES})
-#target_link_libraries(Jpsi_1c.exe ${LHAPDF_LIBRARY})
-
-#file(GLOB_RECURSE test_Jpsi_1c_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++")
-#add_executable(test_Jpsi_1c.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/test_Jpsi_1c.c++" ${test_Jpsi_1c_SOURCE_FILES})
-#target_link_libraries(test_Jpsi_1c.exe ${ROOT_LIBRARIES})
-#target_link_libraries(test_Jpsi_1c.exe ${LHAPDF_LIBRARY})
-
-#file(GLOB_RECURSE Kniehl_cs_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++")
-#add_executable(Kniehl_cs.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/Kniehl_cs.c++" ${Kniehl_cs_SOURCE_FILES})
 
 file(GLOB_RECURSE pol_Jpsi_1c_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++" "src/matr2/*.c++")
 add_executable(pol_Jpsi_1c.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/pol_Jpsi_1c.c++" ${pol_Jpsi_1c_SOURCE_FILES})
 target_link_libraries(pol_Jpsi_1c.exe ${ROOT_LIBRARIES})
 target_link_libraries(pol_Jpsi_1c.exe ${LHAPDF_LIBRARY})
 
-#file(GLOB_RECURSE pol_3S1_co_SOURCE_FILES "src/kinematics/*.cpp" "src/kinematics/*.c++" "src/matr2/*.c++")
-#add_executable(pol_3S1_co.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/pol_3S1_co.c++" ${pol_3S1_co_SOURCE_FILES})
-#target_link_libraries(pol_3S1_co.exe ${ROOT_LIBRARIES})
-#target_link_libraries(pol_3S1_co.exe ${LHAPDF_LIBRARY})
+add_executable(export_hist.exe "${CMAKE_CURRENT_SOURCE_DIR}/src/export_hist.c++")
+target_link_libraries(export_hist.exe ${ROOT_LIBRARIES})
+target_link_libraries(export_hist.exe ${LHAPDF_LIBRARY})
