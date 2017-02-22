@@ -176,6 +176,7 @@ int main(int argc, char **argv) {
     cout << " saveHist="<<saveHist<<endl;
     TFile file((out_prefix+"_out.root").c_str(), "RECREATE");
     TNtuple tup("tup", "tup", "Q2:Y:pTpsi:W2:dsigma");
+    TNtuple stats_tuple("stats","stats","nEv:nPassed");
     init_channels();
 
 
@@ -232,8 +233,8 @@ int main(int argc, char **argv) {
         if(saveHist) fill_hst();
         ++nPassed;
     };
-
-    tup.Write();
+    stats_tuple.Fill(nEv,nPassed);
+    tup.Write(); stats_tuple.Write();
     if(saveHist) save_hst();
     file.Save();
 
