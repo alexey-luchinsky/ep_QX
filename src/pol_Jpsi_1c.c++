@@ -47,6 +47,7 @@ dbl_type xi;
 bool ldme;
 string out_prefix;
 bool saveHist;
+int seed;
 
 
 
@@ -72,6 +73,7 @@ void init_from_command_line(int argc, char **argv) {
     TCLAP::SwitchArg arg_ldme("", "ldme", "whether multiply final answers by LDMEs", cmd, false);
     TCLAP::ValueArg<string> outprefix_arg("o", "out", "prefix for outupu files", false, "", "string", cmd);
     TCLAP::SwitchArg arg_saveHist("H", "saveHist", "whether to save histograms", cmd, false);
+    TCLAP::ValueArg<int> arg_seed("", "seed", "random seed", false, 0, "int", cmd);
 
     cmd.parse(argc, argv);
     nEv = (int) arg_nEv.getValue();
@@ -95,6 +97,7 @@ void init_from_command_line(int argc, char **argv) {
     };
     out_prefix=outprefix_arg.getValue();
     saveHist=arg_saveHist.getValue();
+    seed=arg_seed.getValue();
 }
 
 const int nChannels=4;
@@ -167,7 +170,7 @@ int main(int argc, char **argv) {
     cout << " pdfse=" << pdf_set_name << endl;
     cout << " xi=" << xi << endl;
     lhapdf_pdf = LHAPDF::mkPDF(pdf_set_name, 0);
-    Random *random = new Random();
+    Random *random = new Random(seed);
 
     // experimental conditions from Kinehl
     dbl_type S = pow(ecm, 2);
@@ -184,11 +187,12 @@ int main(int argc, char **argv) {
     cout << " ldme "<<ldme<<endl;
     cout << "out_prefix="<<out_prefix<<endl;
     cout << " saveHist="<<saveHist<<endl;
+    cout << " seed=" << seed<<endl;
     TFile file((out_prefix+"_out.root").c_str(), "RECREATE");
     
     init_channels();
     TNtuple tup("tup", "tup", tuple_vars.c_str());
-    TNtuple stats_tuple("stats","stats","nEv:nPassed");
+    TNtuple stats_tuple("stats","stats","nEv:nPassed:seed");
 
 
     dbl_type Q2_scale;
@@ -252,7 +256,7 @@ int main(int argc, char **argv) {
         if(saveHist) fill_hst();
         ++nPassed;
     };
-    stats_tuple.Fill(nEv,nPassed);
+    stats_tuple.Fill(nEv,nPassed,seed);
     tup.Write(); stats_tuple.Write();
     if(saveHist) save_hst();
     file.Save();
