@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 
 extern dbl_type mc, Mcc, ecm, PI, alpha, alphas, x;
-extern dbl_type Opsi, O3S11, O3S18, O3P08;
+extern dbl_type Opsi, O3S11, O3S18, O3P08, O1S08;
 extern dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
 extern bool gauge;
 cmplx epsG1[4], epsG2[4], epsG3[4], epsPsi[4];
@@ -70,22 +70,18 @@ cmplx amp_3S1_co() {
 }
 
 cmplx amp_1S0_co() {
-    cmplx sunf = COMPLEX_ZERO;
-//    sunf += lcv(epsG1, k2, k3, pPsi)*(sp(epsG2, epsG3)*(2 * pow(sp(k2, k3), 2) - sp(k2, k3) * sp(k2, pPsi) + 2 * sp(k2, pPsi) * sp(k3, pPsi)));
-//    sunf += lcv(epsG1, epsG3, k2, k3)*(2 * sp(epsG2, pPsi) * sp(k2, k3)*(-sp(k2, k3) + sp(k3, pPsi)));
-//    sunf += lcv(epsG1, epsG3, k3, pPsi)*(-2 * (sp(epsG2, pPsi) * sp(k2, k3) - sp(epsG2, k3) * sp(k2, pPsi))*(sp(k2, k3) - sp(k3, pPsi)));
-//    sunf += lcv(epsG1, epsG2, k2, k3)*(-(sp(epsG3, pPsi) * sp(k2, k3)*(2 * sp(k2, k3) + sp(k2, pPsi))));
-//    sunf += lcv(epsG1, epsG2, k2, pPsi)*(-2 * (sp(k2, k3) + sp(k2, pPsi))*(sp(epsG3, pPsi) * sp(k2, k3) - sp(epsG3, k2) * sp(k3, pPsi)));
-//    sunf += lcv(epsG1, epsG2, epsG3, pPsi)*(-2 * sp(k2, k3)*(sp(k2, k3) + sp(k2, pPsi))*(sp(k2, k3) - sp(k3, pPsi)));
-//    sunf += sp(epsG1, epsG3)*(lcv(epsG2, k2, k3, pPsi) * sp(k2, k3) * sp(k2, pPsi));
-//    sunf += lcv(epsG1, epsG3, k2, pPsi)*(sp(epsG2, k3)*(2 * sp(k2, pPsi) * sp(k3, pPsi) + sp(k2, k3)*(-sp(k2, pPsi) + sp(k3, pPsi))));
-//    sunf += lcv(epsG1, epsG2, k3, pPsi)*(sp(epsG3, k2)*(sp(k2, k3)*(2 * sp(k2, pPsi) - sp(k3, pPsi)) - 2 * sp(k2, pPsi) * sp(k3, pPsi)));
-//    sunf += lcv(epsG1, epsG2, epsG3, k3)*(sp(k2, k3) * sp(k2, pPsi)*(sp(k2, pPsi) + sp(k3, pPsi)));
-//    sunf += sp(epsG1, k2)*(lcv(epsG2, epsG3, k3, pPsi) * sp(k2, k3)*(2 * sp(k2, k3) + sp(k2, pPsi) - sp(k3, pPsi)));
-//    sunf += sp(epsG1, k3)*(lcv(epsG2, epsG3, k2, pPsi) * sp(k2, k3)*(2 * sp(k2, k3) + sp(k2, pPsi) - sp(k3, pPsi)));
-//    sunf += lcv(epsG1, epsG2, epsG3, k2)*(-(sp(k2, k3) * sp(k3, pPsi)*(sp(k2, pPsi) + sp(k3, pPsi))));
-//    sunf *= (-16 * alpha * alphas * pow(PI, 2) * sqrt(Opsi / mc)) / (9. * Q2 * sp(k2, k3) * sp(k2, pPsi)*(2 * sp(k2, k3) + sp(k2, pPsi) - sp(k3, pPsi)) * sp(k3, pPsi));
-//    sunf *= sqrt(1. * 24); // SUNF^2
+    cmplx sunf=COMPLEX_ZERO;
+    sunf += lcv(epsG1,epsG3,k2,k3)*((sp(epsG2,pPsi)) * ((sp(k2,k3)) * ((-1) * (sp(k2,k3)) + sp(k3,pPsi))));
+    sunf += lcv(epsG1,epsG3,k3,pPsi)*((-1) * (((sp(epsG2,pPsi)) * (sp(k2,k3)) + (-1) * ((sp(epsG2,k3)) * (sp(k2,pPsi)))) * (sp(k2,k3) + (-1) * (sp(k3,pPsi)))));
+    sunf += lcv(epsG1,epsG2,k2,pPsi)*((-1) * ((sp(k2,k3) + sp(k2,pPsi)) * ((sp(epsG3,pPsi)) * (sp(k2,k3)) + (-1) * ((sp(epsG3,k2)) * (sp(k3,pPsi))))));
+    sunf += lcv(epsG1,epsG2,epsG3,pPsi)*(pow(sp(k2,k3),3) + (sp(k2,k3)) * ((sp(k2,pPsi)) * (sp(k3,pPsi))));
+    sunf += lcv(epsG1,epsG2,k2,k3)*((sp(epsG3,pPsi)) * ((sp(k2,pPsi)) * ((-1) * (sp(k2,k3)) + sp(k3,pPsi))));
+    sunf += lcv(epsG1,epsG2,epsG3,k3)*((sp(k2,k3)) * ((sp(k2,pPsi)) * ((-1) * (sp(k2,k3)) + sp(k3,pPsi))));
+    sunf += lcv(epsG1,epsG2,epsG3,k2)*((-1) * ((sp(k2,k3)) * ((sp(k2,k3) + sp(k2,pPsi)) * (sp(k3,pPsi)))));
+    sunf += sp(epsG1,epsG3)*((lcv(epsG2,k2,k3,pPsi)) * (pow(sp(k2,k3),2) + (sp(k2,pPsi)) * (sp(k3,pPsi))));
+    sunf += lcv(epsG1,epsG3,k2,pPsi)*((sp(epsG2,k3)) * (pow(sp(k2,k3),2) + (sp(k2,pPsi)) * (sp(k3,pPsi))));
+    sunf *= (-32/3.) * ((alpha) * ((alphas) * ((pow(mc,-1/2.)) * ((pow(Q2,-1)) * ((pow(PI,2)) * ((pow(sp(k2,k3),-1)) * ((pow(sp(k2,pPsi),-1)) * ((pow((2) * (sp(k2,k3)) + sp(k2,pPsi) + (-1) * (sp(k3,pPsi)),-1)) * ((pow(sp(k3,pPsi),-1)) * (sqrt(O1S08)))))))))));
+    sunf *= sqrt(24); // f_abc^2
     return sunf;
 }
 
