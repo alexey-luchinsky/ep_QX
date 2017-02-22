@@ -20,6 +20,8 @@ dbl_type nanob = 0.389e6, picob = 1e3 * nanob; // conversion to barn
 dbl_type PI = acos(-1), alpha = 1. / 137, alphas = 0.3;
 dbl_type x;
 
+
+
 #include "LHAPDF/LHAPDF.h"
 LHAPDF::PDF *lhapdf_pdf;
 
@@ -101,11 +103,18 @@ TH1F *hPT2[nChannels], *hQ2[nChannels], *hY[nChannels], *hZ[nChannels], *hW[nCha
 dbl_type dSigma[nChannels], Sigma[nChannels];
 std::function<dbl_type (void)> matr2_func[nChannels];
 
+string tuple_vars="Q2:Y:pTpsi:W2";
+Float_t tuple_vals[4+nChannels];
+
 void init_channels(void) {
     channel_name[0]="3S1_cs"; //matr2_func[0]=getMatr2_3S1_cs();
     channel_name[1]="3S1_co"; //matr2_func[1]=getMatr2_3S1_co();
     channel_name[2]="1S0_co"; //matr2_func[2]=getMatr2_1S0_co();
     channel_name[3]="3P0_co"; //matr2_func[3]=getMatr2_3P0_co();
+    for(int iChannel=0; iChannel<nChannels; ++iChannel) {
+        tuple_vars = tuple_vars+(":s"+channel_name[iChannel]);
+    }
+    cout<<" tuple_vars="<<tuple_vars<<endl;
     if(saveHist) {
         for(int iChannel=0; iChannel<nChannels; ++iChannel) {
             hPT2[iChannel]=new TH1F( ("hPT2_"+channel_name[iChannel]).c_str(),"hPT2",nBins,0,30);
@@ -175,9 +184,10 @@ int main(int argc, char **argv) {
     cout << "out_prefix="<<out_prefix<<endl;
     cout << " saveHist="<<saveHist<<endl;
     TFile file((out_prefix+"_out.root").c_str(), "RECREATE");
-    TNtuple tup("tup", "tup", "Q2:Y:pTpsi:W2:dsigma");
-    TNtuple stats_tuple("stats","stats","nEv:nPassed");
+    
     init_channels();
+    TNtuple tup("tup", "tup", tuple_vars.c_str());
+    TNtuple stats_tuple("stats","stats","nEv:nPassed");
 
 
     dbl_type Q2_scale;
@@ -193,6 +203,8 @@ int main(int argc, char **argv) {
 //                " sigmaCO3=" << sigmaCO3 * nEv / iEv << " pb" << endl;
         x = random->rand(minX, maxX);
 
+        
+        
         if (!kinematics(ramEP)) continue;
         dbl_type wt = (maxX-minX)*ramEP->wt;
         Q2 = -mass2(k1);
@@ -206,6 +218,13 @@ int main(int argc, char **argv) {
         if (z < zMin || z > zMax) continue;
         if (Q2 < minQ2 || Q2 > maxQ2) continue;
 
+//string tuple_vars="Q2:Y:pTpsi:W2";
+//Float_t tuple_vals[4+nChannels];
+        tuple_vals[0]=Q2;
+        tuple_vals[1]=Y;
+        tuple_vals[2]=pT(pPsi);
+        tuple_vals[3]=W2;
+        
         Q2_scale = pow(xi * pT(pPsi), 2);
         Q2_scale = xi * xi * (Q2 + Mcc * Mcc);
         alphas = lhapdf_pdf->alphasQ2((double) Q2_scale);
@@ -226,10 +245,11 @@ int main(int argc, char **argv) {
 
         for(int iChannel=0; iChannel<nChannels; ++iChannel) {
             dSigma[iChannel]=norm_sigma*matr2[iChannel];
+            tuple_vals[4+iChannel]=dSigma[iChannel];
             Sigma[iChannel] += dSigma[iChannel];
         };
 
-        tup.Fill(Q2, Y, pT(pPsi), W2, dSigma[0]);
+        tup.Fill(tuple_vals);
         if(saveHist) fill_hst();
         ++nPassed;
     };
