@@ -198,9 +198,6 @@ int main(int argc, char **argv) {
             if(ldme) cout<<" --- sigmaCS=" << Sigma[0] * nEv / iEv << " pb" << endl;
             else cout<<" --- sigmaCS/LDME=" << Sigma[0] * nEv / iEv << " pb*GeV^(-3)" << endl;
         };
-//                " sigmaCO=" << sigmaCO * nEv / iEv << " pb" <<
-//                " sigmaCO2=" << sigmaCO2 * nEv / iEv << " pb" <<
-//                " sigmaCO3=" << sigmaCO3 * nEv / iEv << " pb" << endl;
         x = random->rand(minX, maxX);
 
         
@@ -245,7 +242,7 @@ int main(int argc, char **argv) {
 
         for(int iChannel=0; iChannel<nChannels; ++iChannel) {
             dSigma[iChannel]=norm_sigma*matr2[iChannel];
-            tuple_vals[4+iChannel]=dSigma[iChannel];
+            tuple_vals[4+iChannel]=dSigma[iChannel]*nEv;
             Sigma[iChannel] += dSigma[iChannel];
         };
 
