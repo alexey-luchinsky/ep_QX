@@ -44,6 +44,7 @@ int nBins;
 dbl_type xi;
 bool ldme;
 string out_prefix;
+bool saveHist;
 
 
 
@@ -68,6 +69,7 @@ void init_from_command_line(int argc, char **argv) {
     TCLAP::ValueArg<double> arg_xi("x", "xi", "scale parameter", false, 1, "double", cmd);
     TCLAP::SwitchArg arg_ldme("", "ldme", "whether multiply final answers by LDMEs", cmd, false);
     TCLAP::ValueArg<string> outprefix_arg("o", "out", "prefix for outupu files", false, "", "string", cmd);
+    TCLAP::SwitchArg arg_saveHist("H", "saveHist", "whether to save histograms", cmd, false);
 
     cmd.parse(argc, argv);
     nEv = (int) arg_nEv.getValue();
@@ -90,6 +92,7 @@ void init_from_command_line(int argc, char **argv) {
         O1S08 = 1;
     };
     out_prefix=outprefix_arg.getValue();
+    saveHist=arg_saveHist.getValue();
 }
 
 const int nChannels=4;
@@ -103,18 +106,20 @@ void init_channels(void) {
     channel_name[1]="3S1_co"; //matr2_func[1]=getMatr2_3S1_co();
     channel_name[2]="1S0_co"; //matr2_func[2]=getMatr2_1S0_co();
     channel_name[3]="3P0_co"; //matr2_func[3]=getMatr2_3P0_co();
-    for(int iChannel=0; iChannel<nChannels; ++iChannel) {
-        hPT2[iChannel]=new TH1F( ("hPT2_"+channel_name[iChannel]).c_str(),"hPT2",nBins,0,30);
-        hPT2[iChannel]->Sumw2();
-        hQ2[iChannel]=new TH1F( ("hQ2_"+channel_name[iChannel]).c_str(),"hQ2",nBins,minQ2,maxQ2);
-        hQ2[iChannel]->Sumw2();
-        hZ[iChannel]=new TH1F( ("hZ_"+channel_name[iChannel]).c_str(),"hZ",nBins,0,1);
-        hZ[iChannel]->Sumw2();
-        hY[iChannel]=new TH1F( ("hY_"+channel_name[iChannel]).c_str(),"hY",nBins,0,1);
-        hY[iChannel]->Sumw2();
-        hW[iChannel]=new TH1F( ("hW_"+channel_name[iChannel]).c_str(),"hW",nBins,sqrt(minW2),sqrt(maxW2));
-        hW[iChannel]->Sumw2();
-        Sigma[iChannel]=0;
+    if(saveHist) {
+        for(int iChannel=0; iChannel<nChannels; ++iChannel) {
+            hPT2[iChannel]=new TH1F( ("hPT2_"+channel_name[iChannel]).c_str(),"hPT2",nBins,0,30);
+            hPT2[iChannel]->Sumw2();
+            hQ2[iChannel]=new TH1F( ("hQ2_"+channel_name[iChannel]).c_str(),"hQ2",nBins,minQ2,maxQ2);
+            hQ2[iChannel]->Sumw2();
+            hZ[iChannel]=new TH1F( ("hZ_"+channel_name[iChannel]).c_str(),"hZ",nBins,0,1);
+            hZ[iChannel]->Sumw2();
+            hY[iChannel]=new TH1F( ("hY_"+channel_name[iChannel]).c_str(),"hY",nBins,0,1);
+            hY[iChannel]->Sumw2();
+            hW[iChannel]=new TH1F( ("hW_"+channel_name[iChannel]).c_str(),"hW",nBins,sqrt(minW2),sqrt(maxW2));
+            hW[iChannel]->Sumw2();
+            Sigma[iChannel]=0;
+        };
     };
 }
 
@@ -168,6 +173,7 @@ int main(int argc, char **argv) {
     cout << " gauge: " << gauge << endl;
     cout << " ldme "<<ldme<<endl;
     cout << "out_prefix="<<out_prefix<<endl;
+    cout << " saveHist="<<saveHist<<endl;
     TFile file((out_prefix+"_out.root").c_str(), "RECREATE");
     TNtuple tup("tup", "tup", "Q2:Y:pTpsi:W2:dsigma");
     init_channels();
@@ -223,12 +229,12 @@ int main(int argc, char **argv) {
         };
 
         tup.Fill(Q2, Y, pT(pPsi), W2, dSigma[0]);
-        fill_hst();
+        if(saveHist) fill_hst();
         ++nPassed;
     };
 
     tup.Write();
-    save_hst();
+    if(saveHist) save_hst();
     file.Save();
 
     print_sigma(true);
