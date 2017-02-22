@@ -43,6 +43,7 @@ string pdf_set_name;
 int nBins;
 dbl_type xi;
 bool ldme;
+string out_prefix;
 
 
 
@@ -66,6 +67,7 @@ void init_from_command_line(int argc, char **argv) {
     TCLAP::ValueArg<int> arg_bins("b", "bins", "number histigram bins", false, 30, "int", cmd);
     TCLAP::ValueArg<double> arg_xi("x", "xi", "scale parameter", false, 1, "double", cmd);
     TCLAP::SwitchArg arg_ldme("", "ldme", "whether multiply final answers by LDMEs", cmd, false);
+    TCLAP::ValueArg<string> outprefix_arg("o", "out", "prefix for outupu files", false, "", "string", cmd);
 
     cmd.parse(argc, argv);
     nEv = (int) arg_nEv.getValue();
@@ -87,6 +89,7 @@ void init_from_command_line(int argc, char **argv) {
         O3P08 = 1;
         O1S08 = 1;
     };
+    out_prefix=outprefix_arg.getValue();
 }
 
 const int nChannels=4;
@@ -129,11 +132,11 @@ void fill_hst() {
 
 void save_hst() {
     for(int iChannel=0; iChannel<nChannels; ++iChannel) {
-        hPT2[iChannel]->Write(); write_histogram_to_file(*hPT2[iChannel],("hPT2_"+channel_name[iChannel]+".hst").c_str());
-        hQ2[iChannel]->Write(); write_histogram_to_file(*hQ2[iChannel],("hQ2_"+channel_name[iChannel]+".hst").c_str());
-        hZ[iChannel]->Write(); write_histogram_to_file(*hZ[iChannel],("hZ_"+channel_name[iChannel]+".hst").c_str());
-        hY[iChannel]->Write(); write_histogram_to_file(*hY[iChannel],("hY_"+channel_name[iChannel]+".hst").c_str());
-        hW[iChannel]->Write(); write_histogram_to_file(*hW[iChannel],("hW_"+channel_name[iChannel]+".hst").c_str());
+        hPT2[iChannel]->Write(); write_histogram_to_file(*hPT2[iChannel],(out_prefix+"hPT2_"+channel_name[iChannel]+".hst").c_str());
+        hQ2[iChannel]->Write(); write_histogram_to_file(*hQ2[iChannel],(out_prefix+"hQ2_"+channel_name[iChannel]+".hst").c_str());
+        hZ[iChannel]->Write(); write_histogram_to_file(*hZ[iChannel],(out_prefix+"hZ_"+channel_name[iChannel]+".hst").c_str());
+        hY[iChannel]->Write(); write_histogram_to_file(*hY[iChannel],(out_prefix+"hY_"+channel_name[iChannel]+".hst").c_str());
+        hW[iChannel]->Write(); write_histogram_to_file(*hW[iChannel],(out_prefix+"hW_"+channel_name[iChannel]+".hst").c_str());
     };
 }
 
@@ -164,8 +167,8 @@ int main(int argc, char **argv) {
 
     cout << " gauge: " << gauge << endl;
     cout << " ldme "<<ldme<<endl;
-
-    TFile file("out_pol.root", "RECREATE");
+    cout << "out_prefix="<<out_prefix<<endl;
+    TFile file((out_prefix+"_out.root").c_str(), "RECREATE");
     TNtuple tup("tup", "tup", "Q2:Y:pTpsi:W2:dsigma");
     init_channels();
 
