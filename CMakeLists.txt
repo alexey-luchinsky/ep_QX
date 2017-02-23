@@ -36,7 +36,7 @@ message(STATUS "LHAPDF --lib-dir: ${LHAPDF_LIBDIR}")
 find_library(LHAPDF_LIBRARY NAMES LHAPDF HINTS "${LHAPDF_LIBDIR}")
 message(STATUS "LHAPDF_LIBRARY = ${LHAPDF_LIBRARY}")
 
-
+include_directories(~/local/include/)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${LHAPDF_INCLUDE})
 
