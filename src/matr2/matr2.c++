@@ -97,7 +97,7 @@ cmplx amp_3P0_co() {
     return sunf;
 }
 
-dbl_type getMatr2(std::function<cmplx(void)>ampFunc, int nPolPsi) {
+dbl_type getMatr2(cmplx (*ampFunc)(), int nPolPsi) {
     dbl_type matr2 = 0;
     dbl_type Q2 = -mass2(k1);
     for (int iG1 = 0; iG1 < 2; ++iG1) {
@@ -109,7 +109,7 @@ dbl_type getMatr2(std::function<cmplx(void)>ampFunc, int nPolPsi) {
                 set_gluon_polarization(iG3, k3, epsG3);
                 for (int iPsi = 0; iPsi < nPolPsi; ++iPsi) {
                     set_psi_polarization(iPsi, pPsi, epsPsi);
-                    cmplx amp = ampFunc();
+                    cmplx amp = (*ampFunc)();
                     matr2 += pow(abs(amp), 2);
                 };
             };
@@ -119,19 +119,19 @@ dbl_type getMatr2(std::function<cmplx(void)>ampFunc, int nPolPsi) {
 }
 
 dbl_type getMatr2_3S1_cs() {
-    return getMatr2(amp_3S1_cs, 3);
+    return getMatr2(&amp_3S1_cs, 3);
 }
 
 dbl_type getMatr2_3S1_co() {
-    return getMatr2(amp_3S1_co, 3);
+    return getMatr2(&amp_3S1_co, 3);
 }
 
 dbl_type getMatr2_1S0_co() {
-    return getMatr2(amp_1S0_co, 1);
+    return getMatr2(&amp_1S0_co, 1);
 }
 
 dbl_type getMatr2_3P0_co() {
-    return getMatr2(amp_3P0_co, 1);
+    return getMatr2(&amp_3P0_co, 1);
 }
 
 
