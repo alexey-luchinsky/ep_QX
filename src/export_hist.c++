@@ -119,6 +119,8 @@ int main(void) {
     cout<<"[tup_chain]="<<tup_chain.GetEntries()<<endl;
     cout<<"[stat_chain]="<<stat_chain.GetEntries()<<endl;
     for(int iEv=0; iEv<tup_chain.GetEntries(); ++iEv) {
+        if (iEv % (nEv / 100) == 0 && iEv > 0) 
+            cout << "---- Event " << iEv << " ("<< (int) (100. * iEv / tup_chain.GetEntries()) << " %)"<<endl;
         tup_chain.GetEntry(iEv);
         Q2=tuple_vals[0]; Y=tuple_vals[1]; pTpsi=tuple_vals[2]; W2=tuple_vals[3];
         z=tuple_vals[4];
