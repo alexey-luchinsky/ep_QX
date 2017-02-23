@@ -104,7 +104,7 @@ const int nChannels=4;
 string channel_name[nChannels];
 TH1F *hPT2[nChannels], *hQ2[nChannels], *hY[nChannels], *hZ[nChannels], *hW[nChannels];
 dbl_type dSigma[nChannels], Sigma[nChannels];
-std::function<dbl_type (void)> matr2_func[nChannels];
+//std::function<dbl_type (void)> matr2_func[nChannels];
 
 const int nVars=5;
 string tuple_vars="Q2:Y:pTpsi:W2:z";
