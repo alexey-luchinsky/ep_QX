@@ -93,11 +93,11 @@ void fill_hst() {
     for(int iChannel=0; iChannel<nChannels; ++iChannel)
         dSigma[iChannel]=tuple_vals[nVars+iChannel]/nEv;
     for(int iChannel=0; iChannel<nChannels; ++iChannel) {
-        hPT2[iChannel]->Fill(pow(pTpsi,2), dSigma[iChannel]/nEv);
-        hQ2[iChannel]->Fill(Q2, dSigma[iChannel]/nEv);
-        hZ[iChannel]->Fill(z, dSigma[iChannel]/nEv);
-        hY[iChannel]->Fill(Y, dSigma[iChannel]/nEv);
-        hW[iChannel]->Fill(sqrt(W2), dSigma[iChannel]/nEv);        
+        hPT2[iChannel]->Fill(pow(pTpsi,2), dSigma[iChannel]);
+        hQ2[iChannel]->Fill(Q2, dSigma[iChannel]);
+        hZ[iChannel]->Fill(z, dSigma[iChannel]);
+        hY[iChannel]->Fill(Y, dSigma[iChannel]);
+        hW[iChannel]->Fill(sqrt(W2), dSigma[iChannel]);        
     }
 }
 
