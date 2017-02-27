@@ -200,12 +200,11 @@ int main(int argc, char **argv) {
 
     dbl_type Q2_scale;
     int nPassed = 0, nNegative = 0;
-    for (int iEv = 0; iEv < nEv; ++iEv) {
-        if (iEv % (nEv / 100) == 0 && iEv > 0) {
-            cout << "---- Event " << iEv << " ("<< (int) (100. * iEv / nEv) << " %)";
-            if(ldme) cout<<" --- sigmaCS=" << Sigma[0] * nEv / iEv << " pb" << endl;
-            else cout<<" --- sigmaCS/LDME=" << Sigma[0] * nEv / iEv << " pb*GeV^(-3)" << endl;
-        };
+    int required_passed=nEv;
+    nEv=0;
+    while(nPassed<required_passed)
+    {
+        ++nEv;
         x = random->rand(minX, maxX);
 
         
@@ -246,7 +245,7 @@ int main(int argc, char **argv) {
         norm_sigma *= pdf*wt;
         norm_sigma *= 1. / 4 / 8; // polarizations and initial gluon spin
         norm_sigma *= 1. / (2 * x * pow(ecm, 2)); // 4 I
-        norm_sigma *= 1. / nEv;
+//        norm_sigma *= 1. / nEv;
         norm_sigma *= picob;
 
         for(int iChannel=0; iChannel<nChannels; ++iChannel) {
@@ -258,7 +257,16 @@ int main(int argc, char **argv) {
         tup.Fill(tuple_vals);
         if(saveHist) fill_hst();
         ++nPassed;
+        if (nPassed % (required_passed / 100) == 0 && nPassed > 0) {
+            cout << "---- Event " << nPassed << " ("<< (int) (100. * nPassed / required_passed) << " %)";
+//            if(ldme) cout<<" --- sigmaCS=" << Sigma[0] * nEv / iEv << " pb" << endl;
+//            else cout<<" --- sigmaCS/LDME=" << Sigma[0] * nEv / iEv << " pb*GeV^(-3)" << endl;
+            cout<<endl;
+        };
+
     };
+    for(int iChannel=0; iChannel<nChannels; ++iChannel)
+        Sigma[iChannel] /= nEv;
     stats_tuple.Fill(nEv,nPassed,seed);
     tup.Write(); stats_tuple.Write();
     if(saveHist) save_hst();
