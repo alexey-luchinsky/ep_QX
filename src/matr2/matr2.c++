@@ -11,6 +11,7 @@ extern dbl_type mc, Mcc, ecm, PI, alpha, alphas, x;
 extern dbl_type Opsi, O3S11, O3S18, O3P08, O1S08;
 extern dbl_type P[4], k[4], kp[4], k1[4], k2[4], k3[4], pPsi[4];
 extern bool gauge;
+extern bool check;
 cmplx epsG1[4], epsG2[4], epsG3[4], epsPsi[4];
 extern dbl_type Q2;
 
@@ -28,20 +29,44 @@ void write_histogram_to_file(TH1F &histogram, string file_name) {
     file.close();
 }
 
+void print_debug() {
+    cout<<" ecm="<<ecm<<";"<<endl;
+    println_4v_math("P",P);
+    println_4v_math("k",k);
+    println_4v_math("kp",kp);
+    println_4v_math("k3",k3);
+    println_4v_math("pPsi",pPsi);
+    cout<<" (kp+pPsi+k3)^2="<<sum_mass2(kp, pPsi, k3)<<" vs "<<x*ecm*ecm<<endl;
+    assert(are_equal(sum_mass2(kp, pPsi, k3), x * ecm * ecm));
+};
+
 bool kinematics(RamboEP *ramEP) {
+    bool ok=true;
     if (!ramEP->next(kp, pPsi, k3, x)) return false;
     set_v4(k, ramEP->kIn); // k
-    assert(is_zero(mass2(k)));
+    ok = ok && is_zero(mass2(k));
+//    assert(is_zero(mass2(k)));
     set_v4(kp, ramEP->kOut); // kp
-    assert(is_zero(mass2(kp)));
+    ok = ok && is_zero(mass2(kp));
+//    assert(is_zero(mass2(kp)));
     set_v4(k2, ramEP->Pg); // k2
-    assert(are_equal(sum_mass2(pPsi, k3), ramEP->W2));
+    ok = ok && are_equal(sum_mass2(pPsi, k3), ramEP->W2);
+//    assert(are_equal(sum_mass2(pPsi, k3), ramEP->W2));
     subtract(k, kp, k1); // k1=k-kp
-    assert(are_equal(mass2(k1), -ramEP->Q2));
-    assert(are_equal(mass2(pPsi), Mcc * Mcc));
-    assert(is_zero(mass2(k3)));
-    assert(are_equal(sum_mass2(k, k2), x * ecm * ecm));
-    assert(are_equal(sum_mass2(kp, pPsi, k3), x * ecm * ecm));
+    ok = ok && are_equal(mass2(k1), -ramEP->Q2);
+    ok = ok && are_equal(mass2(pPsi), Mcc * Mcc);
+    ok = ok && is_zero(mass2(k3));
+    ok = ok && are_equal(sum_mass2(k, k2), x * ecm * ecm);
+    ok = ok && are_equal(sum_mass2(kp, pPsi, k3), x * ecm * ecm);
+//    assert(are_equal(mass2(k1), -ramEP->Q2));
+//    assert(are_equal(mass2(pPsi), Mcc * Mcc));
+//    assert(is_zero(mass2(k3)));
+//    assert(are_equal(sum_mass2(k, k2), x * ecm * ecm));
+//    assert(are_equal(sum_mass2(kp, pPsi, k3), x * ecm * ecm));
+    if(!ok && check) {
+        print_debug();
+        return false;
+    };
     return true;
 };
 

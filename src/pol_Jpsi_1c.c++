@@ -48,6 +48,7 @@ bool ldme;
 string out_prefix;
 bool saveHist;
 int seed;
+bool check;
 
 
 
@@ -74,6 +75,7 @@ void init_from_command_line(int argc, char **argv) {
     TCLAP::ValueArg<string> outprefix_arg("o", "out", "prefix for outupu files", false, "", "string", cmd);
     TCLAP::SwitchArg arg_saveHist("H", "saveHist", "whether to save histograms", cmd, false);
     TCLAP::ValueArg<int> arg_seed("", "seed", "random seed", false, 0, "int", cmd);
+    TCLAP::SwitchArg arg_check("c", "check", "whether to check kinematics", cmd, false);
 
     cmd.parse(argc, argv);
     nEv = (int) arg_nEv.getValue();
@@ -98,6 +100,7 @@ void init_from_command_line(int argc, char **argv) {
     out_prefix=outprefix_arg.getValue();
     saveHist=arg_saveHist.getValue();
     seed=arg_seed.getValue();
+    check = arg_check.getValue();
 }
 
 const int nChannels=4;
