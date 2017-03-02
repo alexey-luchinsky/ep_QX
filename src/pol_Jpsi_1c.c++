@@ -106,11 +106,11 @@ void init_from_command_line(int argc, char **argv) {
 const int nChannels=4;
 string channel_name[nChannels];
 TH1F *hPT2[nChannels], *hQ2[nChannels], *hY[nChannels], *hZ[nChannels], *hW[nChannels];
-dbl_type dSigma[nChannels], Sigma[nChannels];
+dbl_type MATR2[nChannels], Sigma[nChannels];
 //std::function<dbl_type (void)> matr2_func[nChannels];
 
-const int nVars=5;
-string tuple_vars="Q2:Y:pTpsi:W2:z";
+const int nVars=8;
+string tuple_vars="Q2:Y:pTpsi:W2:z:x:wt:pdf";
 Float_t tuple_vals[nVars+nChannels];
 
 void init_channels(void) {
@@ -119,7 +119,7 @@ void init_channels(void) {
     channel_name[2]="1S0_co"; //matr2_func[2]=getMatr2_1S0_co();
     channel_name[3]="3P0_co"; //matr2_func[3]=getMatr2_3P0_co();
     for(int iChannel=0; iChannel<nChannels; ++iChannel) {
-        tuple_vars = tuple_vars+(":s"+channel_name[iChannel]);
+        tuple_vars = tuple_vars+(":matr2_"+channel_name[iChannel]);
     }
     cout<<" tuple_vars="<<tuple_vars<<endl;
     if(saveHist) {
@@ -140,25 +140,25 @@ void init_channels(void) {
 }
 
 void fill_hst() {
-    for(int iChannel=0; iChannel<nChannels; ++iChannel) {
-        hPT2[iChannel]->Fill(pT_squared(pPsi), dSigma[iChannel]);
-        hQ2[iChannel]->Fill(Q2, dSigma[iChannel]);
-        hZ[iChannel]->Fill(z, dSigma[iChannel]);
-        hY[iChannel]->Fill(Y, dSigma[iChannel]);
-        hW[iChannel]->Fill(sqrt(W2), dSigma[iChannel]);        
-    }
+//    for(int iChannel=0; iChannel<nChannels; ++iChannel) {
+//        hPT2[iChannel]->Fill(pT_squared(pPsi), dSigma[iChannel]);
+//        hQ2[iChannel]->Fill(Q2, dSigma[iChannel]);
+//        hZ[iChannel]->Fill(z, dSigma[iChannel]);
+//        hY[iChannel]->Fill(Y, dSigma[iChannel]);
+//        hW[iChannel]->Fill(sqrt(W2), dSigma[iChannel]);        
+//    }
 }
 
 
 
 void save_hst() {
-    for(int iChannel=0; iChannel<nChannels; ++iChannel) {
-        hPT2[iChannel]->Write(); write_histogram_to_file(*hPT2[iChannel],(out_prefix+"hPT2_"+channel_name[iChannel]+".hst").c_str());
-        hQ2[iChannel]->Write(); write_histogram_to_file(*hQ2[iChannel],(out_prefix+"hQ2_"+channel_name[iChannel]+".hst").c_str());
-        hZ[iChannel]->Write(); write_histogram_to_file(*hZ[iChannel],(out_prefix+"hZ_"+channel_name[iChannel]+".hst").c_str());
-        hY[iChannel]->Write(); write_histogram_to_file(*hY[iChannel],(out_prefix+"hY_"+channel_name[iChannel]+".hst").c_str());
-        hW[iChannel]->Write(); write_histogram_to_file(*hW[iChannel],(out_prefix+"hW_"+channel_name[iChannel]+".hst").c_str());
-    };
+//    for(int iChannel=0; iChannel<nChannels; ++iChannel) {
+//        hPT2[iChannel]->Write(); write_histogram_to_file(*hPT2[iChannel],(out_prefix+"hPT2_"+channel_name[iChannel]+".hst").c_str());
+//        hQ2[iChannel]->Write(); write_histogram_to_file(*hQ2[iChannel],(out_prefix+"hQ2_"+channel_name[iChannel]+".hst").c_str());
+//        hZ[iChannel]->Write(); write_histogram_to_file(*hZ[iChannel],(out_prefix+"hZ_"+channel_name[iChannel]+".hst").c_str());
+//        hY[iChannel]->Write(); write_histogram_to_file(*hY[iChannel],(out_prefix+"hY_"+channel_name[iChannel]+".hst").c_str());
+//        hW[iChannel]->Write(); write_histogram_to_file(*hW[iChannel],(out_prefix+"hW_"+channel_name[iChannel]+".hst").c_str());
+//    };
 }
 
 void print_sigma(bool _endl) {
@@ -223,13 +223,6 @@ int main(int argc, char **argv) {
         if (z < zMin || z > zMax) continue;
         if (Q2 < minQ2 || Q2 > maxQ2) continue;
 
-//string tuple_vars="Q2:Y:pTpsi:W2";
-//Float_t tuple_vals[nVars+nChannels];
-        tuple_vals[0]=Q2;
-        tuple_vals[1]=Y;
-        tuple_vals[2]=pT(pPsi);
-        tuple_vals[3]=W2;
-        tuple_vals[4]=z;
         
         Q2_scale = pow(xi * pT(pPsi), 2);
         Q2_scale = xi * xi * (Q2 + Mcc * Mcc);
@@ -242,17 +235,25 @@ int main(int argc, char **argv) {
         matr2[2]=getMatr2_1S0_co();
         matr2[3]=getMatr2_3P0_co();
         
-        dbl_type norm_sigma=1;
-        norm_sigma *= pdf*wt;
-        norm_sigma *= 1. / 4 / 8; // polarizations and initial gluon spin
-        norm_sigma *= 1. / (2 * x * pow(ecm, 2)); // 4 I
-        norm_sigma *= 1. / nEv;
-        norm_sigma *= picob;
+//        dbl_type norm_sigma=1;
+//        norm_sigma *= pdf*wt;
+        wt *= 1. / 4 / 8; // polarizations and initial gluon spin
+        wt *= 1. / (2 * x * pow(ecm, 2)); // 4 I
+        wt *= 1. / nEv;
+        wt *= picob;
 
+        tuple_vals[0]=Q2;
+        tuple_vals[1]=Y;
+        tuple_vals[2]=pT(pPsi);
+        tuple_vals[3]=W2;
+        tuple_vals[4]=z;
+        tuple_vals[5]=x;
+        tuple_vals[6]=wt;
+        tuple_vals[7]=pdf;
         for(int iChannel=0; iChannel<nChannels; ++iChannel) {
-            dSigma[iChannel]=norm_sigma*matr2[iChannel];
-            tuple_vals[nVars+iChannel]=dSigma[iChannel]*nEv;
-            Sigma[iChannel] += dSigma[iChannel];
+            MATR2[iChannel]=matr2[iChannel];
+            tuple_vals[nVars+iChannel]=MATR2[iChannel]*nEv;
+            Sigma[iChannel] += wt*pdf*MATR2[iChannel];
         };
 
         tup.Fill(tuple_vals);

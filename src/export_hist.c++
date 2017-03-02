@@ -21,11 +21,11 @@ void write_histogram_to_file(TH1F &histogram, string file_name) {
 
     file.close();
 }
-const int nVars=5;
+const int nVars=8;
 const int nChannels=4;
 string channel_name[nChannels];
 TH1F *hPT2[nChannels], *hQ2[nChannels], *hY[nChannels], *hZ[nChannels], *hW[nChannels];
-dbl_type dSigma[nChannels], Sigma[nChannels];
+dbl_type MATR2[nChannels], dSigma[nChannels], Sigma[nChannels];
 
 
 string tuple_vars[nVars+nChannels];
@@ -40,12 +40,15 @@ void init_channels(void) {
     tuple_vars[2]="pTpsi";
     tuple_vars[3]="W2";
     tuple_vars[4]="z";
+    tuple_vars[5]="x";
+    tuple_vars[6]="wt";
+    tuple_vars[7]="pdf";
     channel_name[0]="3S1_cs";
     channel_name[1]="3S1_co";
     channel_name[2]="1S0_co";
     channel_name[3]="3P0_co";
     for(int iChannel=0; iChannel<nChannels; ++iChannel)
-        tuple_vars[nVars+iChannel]="s"+channel_name[iChannel];
+        tuple_vars[nVars+iChannel]="matr2_"+channel_name[iChannel];
     for(int i=0; i<nVars+nChannels; ++i) {
         tup_chain.SetBranchAddress(tuple_vars[i].c_str(), &(tuple_vals[i]));
     };
@@ -53,7 +56,7 @@ void init_channels(void) {
 
 int nBins=30;
 string out_prefix="";
-dbl_type Q2, minQ2, maxQ2, Y, pTpsi, minPT2, maxPT2, W2, minW2, maxW2, z;
+dbl_type Q2, minQ2, maxQ2, Y, pTpsi, minPT2, maxPT2, W2, minW2, maxW2, z, x, wt, pdf;
 int nEv=0;
 
 void init_hists() {
@@ -91,7 +94,7 @@ void save_hst() {
 
 void fill_hst() {
     for(int iChannel=0; iChannel<nChannels; ++iChannel)
-        dSigma[iChannel]=tuple_vals[nVars+iChannel]/nEv;
+        dSigma[iChannel]=wt*pdf*tuple_vals[nVars+iChannel]/nEv;
     for(int iChannel=0; iChannel<nChannels; ++iChannel) {
         hPT2[iChannel]->Fill(pow(pTpsi,2), dSigma[iChannel]);
         hQ2[iChannel]->Fill(Q2, dSigma[iChannel]);
@@ -118,14 +121,22 @@ int main(void) {
     init_hists();
     cout<<"[tup_chain]="<<tup_chain.GetEntries()<<endl;
     cout<<"[stat_chain]="<<stat_chain.GetEntries()<<endl;
+    dbl_type dSigma_cs, Sigma_cs=0;
     for(int iEv=0; iEv<tup_chain.GetEntries(); ++iEv) {
-        if (iEv % (nEv / 100) == 0 && iEv > 0) 
-            cout << "---- Event " << iEv << " ("<< (int) (100. * iEv / tup_chain.GetEntries()) << " %)"<<endl;
+        if (iEv % (nEv / 100) == 0 && iEv > 0) {
+            cout << "---- Event " << iEv << " ("<< (int) (100. * iEv / tup_chain.GetEntries()) << " %) ";
+            cout << " Sigma_cs="<<Sigma_cs*tup_chain.GetEntries()/iEv<<endl;
+        };
         tup_chain.GetEntry(iEv);
         Q2=tuple_vals[0]; Y=tuple_vals[1]; pTpsi=tuple_vals[2]; W2=tuple_vals[3];
         z=tuple_vals[4];
+        x=tuple_vals[5];
+        wt=tuple_vals[6];
+        pdf=tuple_vals[7];
+        Sigma_cs += wt*pdf*tuple_vals[nVars]/nEv;
         fill_hst();
     }
     save_hst();
+    cout<<" Sigma_cs="<<Sigma_cs<<endl;
     return 0;
 }
