@@ -49,6 +49,7 @@ string out_prefix;
 bool saveHist;
 int seed;
 bool check;
+int debug;
 
 
 
@@ -76,6 +77,7 @@ void init_from_command_line(int argc, char **argv) {
     TCLAP::SwitchArg arg_saveHist("H", "saveHist", "whether to save histograms", cmd, false);
     TCLAP::ValueArg<int> arg_seed("", "seed", "random seed", false, 0, "int", cmd);
     TCLAP::SwitchArg arg_check("c", "check", "whether to check kinematics", cmd, false);
+    TCLAP::ValueArg<int> arg_debug("d", "debug", "some debug information will be printed for first <debuged> passed events", false, 0, "int", cmd);
 
     cmd.parse(argc, argv);
     nEv = (int) arg_nEv.getValue();
@@ -101,6 +103,7 @@ void init_from_command_line(int argc, char **argv) {
     saveHist=arg_saveHist.getValue();
     seed=arg_seed.getValue();
     check = arg_check.getValue();
+    debug=arg_debug.getValue();
 }
 
 const int nChannels=4;
@@ -239,7 +242,7 @@ int main(int argc, char **argv) {
 //        norm_sigma *= pdf*wt;
         wt *= 1. / 4 / 8; // polarizations and initial gluon spin
         wt *= 1. / (2 * x * pow(ecm, 2)); // 4 I
-        wt *= 1. / nEv;
+//        wt *= 1. / nEv;
         wt *= picob;
 
         tuple_vals[0]=Q2;
@@ -252,13 +255,25 @@ int main(int argc, char **argv) {
         tuple_vals[7]=pdf;
         for(int iChannel=0; iChannel<nChannels; ++iChannel) {
             MATR2[iChannel]=matr2[iChannel];
-            tuple_vals[nVars+iChannel]=MATR2[iChannel]*nEv;
-            Sigma[iChannel] += wt*pdf*MATR2[iChannel];
+            tuple_vals[nVars+iChannel]=MATR2[iChannel];
+            Sigma[iChannel] += wt*pdf*MATR2[iChannel]/nEv;
         };
 
         tup.Fill(tuple_vals);
         if(saveHist) fill_hst();
         ++nPassed;
+        if(nPassed<debug) {
+            cout<<"(*===== Debug print ======*)"<<endl;
+            std::cout.precision(20);
+            println_4v_math("P",P);
+            println_4v_math("Pg",ramEP->Pg);            
+            println_4v_math("k",k);
+            println_4v_math("kp",kp);
+            println_4v_math("pPsi",pPsi);
+            println_4v_math("k1",k1);
+            println_4v_math("k2",k2);
+            println_4v_math("k3",k3);
+        }
     };
     stats_tuple.Fill(nEv,nPassed,seed);
     tup.Write(); stats_tuple.Write();
